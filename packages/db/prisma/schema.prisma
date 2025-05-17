@@ -14,57 +14,58 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email String @unique
-  password String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String             @id @default(uuid())
+  name              String?
+  email             String             @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   connectedAccounts ConnectedAccount[]
 
   @@map("users")
 }
 
 model ConnectedAccount {
-  id String @id @default(uuid())
-  userId String
-  user User @relation(fields: [userId], references: [id])
-  email String
-  accessToken String
-  refreshToken String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  mails Mails[]
+  id               String           @id @default(uuid())
+  userId           String
+  user             User             @relation(fields: [userId], references: [id])
+  email            String
+  accessToken      String
+  refreshToken     String
+  expiresAt        DateTime
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  emails           Mails[]
   customCategories CustomCategory[]
 
   @@map("connected_accounts")
 }
 
 model Mails {
-  id String @id @default(uuid())
-  from String
-  to String
-  subject String
-  body String
-  attachments AttachmentMetaData[]
-  status MailStatus @default(PENDING)
+  id                 String               @id @default(uuid())
+  from               String
+  to                 String
+  subject            String
+  body               String
+  attachments        AttachmentMetaData[]
+  status             MailStatus           @default(PENDING)
   connectedAccountId String
-  connectedAccount ConnectedAccount @relation(fields: [connectedAccountId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  connectedAccount   ConnectedAccount     @relation(fields: [connectedAccountId], references: [id])
+  category           CustomCategory?      @relation(fields: [categoryId], references: [id])
+  categoryId         String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
 
   @@map("mails")
 }
 
 model AttachmentMetaData {
-  id String @id @default(uuid())
-  fileName String
+  id          String @id @default(uuid())
+  fileName    String
   contentType String
-  size Int
-  mailId String
-  storageUrl String
-  mail Mails @relation(fields: [mailId], references: [id])
+  size        Int
+  mailId      String
+  storageUrl  String
+  mail        Mails  @relation(fields: [mailId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -73,13 +74,13 @@ model AttachmentMetaData {
 }
 
 model CustomCategory {
-  id String @id @default(uuid())
-  name String
+  id                 String           @id @default(uuid())
+  name               String
   connectedAccountId String
-  connectedAccount ConnectedAccount @relation(fields: [connectedAccountId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  connectedAccount   ConnectedAccount @relation(fields: [connectedAccountId], references: [id])
+  emails             Mails[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 
   @@map("custom_categories")
 }
