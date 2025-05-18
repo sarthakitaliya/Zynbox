@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^6.8.2",
+    "better-auth": "^1.2.8",
     "framer-motion": "^12.12.1",
     "next": "15.3.2",
     "react": "^19.0.0",
@@ -16,6 +18,8 @@
     "react-icons": "^5.5.0"
   },
   "devDependencies": {
+    "@repo/db": "workspace:*",
+    "@repo/utils": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
