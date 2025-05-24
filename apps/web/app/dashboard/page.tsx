@@ -3,23 +3,51 @@
 import { useSession } from "@/lib/auth-client";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "@/lib/auth-client";
-import {api} from "@repo/utils/api";
+import { api } from "@repo/utils/api";
+import { useEffect, useState } from "react";
+
+interface Email {
+  id: string;
+  threadId: string;
+  labelIds: string[];
+  snippet: string;
+  payload: {
+    headers: Array<{
+      name: string;
+      value: string;
+    }>;
+  };
+}
 
 export default function Dashboard() {
   const { data: session } = useSession();
+  const [emails, setEmails] = useState<Email[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchEmails = async (accountId: string) => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/auth/emails/${accountId}`);
+      setEmails(response.data.emails);
+    } catch (error) {
+      console.error("Error fetching emails:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     try {
-    const res = await api.get("/auth/connect-account");
-    const { url } = res.data;
-    console.log(res);
-      if(url){
+      const res = await api.get("/auth/connect-account");
+      const { url } = res.data;
+      if (url) {
         window.location.href = url;
       }
     } catch (error) {
-      console.error("Sign in error:", error);  
+      console.error("Sign in error:", error);
     }
-  }
+  };
+
   if (!session) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -62,8 +90,32 @@ export default function Dashboard() {
                 Connected Accounts
               </h2>
               <div className="space-y-4">
-                
-
+                {loading ? (
+                  <div className="flex justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {emails.map((email) => (
+                      <div key={email.id} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-medium">
+                              {email.payload.headers.find(h => h.name === 'Subject')?.value || 'No Subject'}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              From: {email.payload.headers.find(h => h.name === 'From')?.value}
+                            </p>
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {new Date(parseInt(email.id)).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-gray-600">{email.snippet}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 <button
                   onClick={handleGoogleSignIn}

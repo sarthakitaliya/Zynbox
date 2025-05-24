@@ -43,6 +43,10 @@ export const googleCallback = async (req: Request, res: Response) => {
       name,
       picture,
     }: { email: string; name: string; picture: string } = userData;
+    if(req.user.email == email) {
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+      return;
+    }
     const existingUser = await prismaClient.connectedAccount.findUnique({
       where: {
         email,
