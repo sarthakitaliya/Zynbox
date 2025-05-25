@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { prismaClient } from "@repo/db/client";
 import { getAuthUrl, getTokens } from "../utils/google";
 import { google } from "googleapis";
@@ -8,7 +8,7 @@ export const googleAuth = (req: Request, res: Response) => {
   res.json({ url });
 };
 
-export const googleCallback = async (req: Request, res: Response) => {
+export const googleCallback = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const code = req.query.code as string;
     const { tokens, oauth2Client } = await getTokens(code);
@@ -58,7 +58,6 @@ export const googleCallback = async (req: Request, res: Response) => {
 
     res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
   } catch (error) {
-    console.error("Error during Google callback:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };

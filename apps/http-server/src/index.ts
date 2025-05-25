@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { authMiddleware } from './middleware/auth.middleware';
+import { errorHandler } from './middleware/error.middleware';
 import authRouter from './routes/auth.route';
 import categoriesRouter from './routes/categories.route';
 import emailsRouter from './routes/emails.route';
@@ -28,4 +29,9 @@ app.use("/api/auth", authMiddleware, authRouter)
 app.use("/api/categories", authMiddleware, categoriesRouter)
 app.use("/api/emails", authMiddleware, emailsRouter)
 
-app.listen(3001)
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
