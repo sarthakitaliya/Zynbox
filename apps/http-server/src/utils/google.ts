@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import dotenv from "dotenv";
+import { prismaClient } from "@repo/db/client";
 dotenv.config();
 
 const oauth2Client = new google.auth.OAuth2(
@@ -30,4 +31,26 @@ export async function getTokens(code: string): Promise<any> {
 
 export function getOAuthClient(): any {
   return oauth2Client;
+}
+
+export async function getGmailClient(userId: string){
+  const user = await prismaClient.account.findUnique({
+    where: { id: userId },
+    select: {
+      accessToken: true,
+      refreshToken: true,
+    },
+  });
+  if (!user || !user.accessToken || !user.refreshToken) {
+    throw new Error("User does not have Google tokens");
+  }
+  oauth2Client.setCredentials({
+    access_token: user.accessToken,
+    refresh_token: user.refreshToken,
+  });
+  const gmail = google.gmail({
+    version: "v1",
+    auth: oauth2Client,
+  });
+  return gmail;
 }
