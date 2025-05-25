@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import axios from "axios";
 import { prismaClient } from "@repo/db/client";
 import { getAuthUrl, getTokens } from "../utils/google";
 import { google } from "googleapis";
