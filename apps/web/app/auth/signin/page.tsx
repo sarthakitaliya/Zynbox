@@ -4,11 +4,15 @@ import { authClient } from "@/lib/auth-client";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { FaEnvelope } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const {data: session} = authClient.useSession();
-  
+  const router = useRouter();
+  if (session) {
+    router.push("/dashboard");
+  }
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
