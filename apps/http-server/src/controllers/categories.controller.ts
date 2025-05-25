@@ -1,57 +1,70 @@
-import { Request, Response } from "express";
-import {create_category, delete_category, get_categories, update_category} from "../services/categories.service";
+import { Request, Response, NextFunction } from "express";
+import { create_category, delete_category, get_categories, update_category } from "../services/categories.service";
+import { ValidationError, NotFoundError } from "../utils/errors";
 
-export const getCategories = async (req: Request, res: Response) => {
+export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const categories = await get_categories(req.user.id);
     res.json(categories);
   } catch (error) {
-    console.error("Error fetching categories:", error);
-    res.status(500).json({ error: "Failed to fetch categories" });
+    next(error);
   }
-}
-export const createCategory = async (req: Request, res: Response) => {
+};
+
+export const createCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, description } = req.body;
+    
     if (!name) {
-      return res.status(400).json({ error: "Category name is required" });
+      throw new ValidationError("Category name is required");
     }
 
     const category = await create_category(req.user.id, name, description);
     res.status(201).json(category);
   } catch (error) {
-    console.error("Error creating category:", error);
-    res.status(500).json({ error: "Failed to create category" });
+    next(error);
   }
-}
-export const updateCategory = async (req: Request, res: Response) => {
+};
+
+export const updateCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { categoryId } = req.params;
     const { name, description } = req.body;
 
-    const category = await update_category(req.user.id, categoryId as string, name, description);
+    if (!categoryId) {
+      throw new ValidationError("Category ID is required");
+    }
+
+    if (!name) {
+      throw new ValidationError("Category name is required");
+    }
+
+    const category = await update_category(req.user.id, categoryId, name, description);
     if (!category) {
-      return res.status(404).json({ error: "Category not found" });
+      throw new NotFoundError("Category not found");
     }
 
     res.json(category);
   } catch (error) {
-    console.error("Error updating category:", error);
-    res.status(500).json({ error: "Failed to update category" });
+    next(error);
   }
 };
-export const deleteCategory = async (req: Request, res: Response) => {
+
+export const deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { categoryId } = req.params;
+    
+    if (!categoryId) {
+      throw new ValidationError("Category ID is required");
+    }
 
-    const deleted = await delete_category(req.user.id, categoryId as string);
+    const deleted = await delete_category(req.user.id, categoryId);
     if (!deleted) {
-      return res.status(404).json({ error: "Category not found" });
+      throw new NotFoundError("Category not found");
     }
 
     res.status(204).send();
   } catch (error) {
-    console.error("Error deleting category:", error);
-    res.status(500).json({ error: "Failed to delete category" });
+    next(error);
   }
 };
