@@ -23,6 +23,8 @@ model User {
   updatedAt         DateTime           @updatedAt
   sessions          Session[]
   accounts          Account[]
+  mails             Mail[]
+  categories        CustomCategory[]
   connectedAccounts ConnectedAccount[]
 
   @@map("users")
@@ -73,37 +75,36 @@ model Verification {
 }
 
 model ConnectedAccount {
-  id               String           @id @default(uuid())
-  userId           String
-  user             User             @relation(fields: [userId], references: [id])
-  name             String
-  image            String
-  email            String           @unique
-  accessToken      String
-  refreshToken     String
-  expiresAt        DateTime
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  emails           Mails[]
-  customCategories CustomCategory[]
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  name         String
+  image        String
+  email        String   @unique
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("connected_accounts")
 }
 
-model Mails {
-  id                 String               @id @default(uuid())
-  from               String
-  to                 String
-  subject            String
-  body               String
-  attachments        AttachmentMetaData[]
-  status             MailStatus           @default(PENDING)
-  connectedAccountId String
-  connectedAccount   ConnectedAccount     @relation(fields: [connectedAccountId], references: [id])
-  category           CustomCategory?      @relation(fields: [categoryId], references: [id])
-  categoryId         String?
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
+model Mail {
+  id          String               @id @default(uuid())
+  gmailId     String               @unique
+  threadId    String?
+  from        String
+  to          String
+  subject     String
+  snippet     String?
+  attachments AttachmentMetaData[]
+  userId      String
+  user        User                 @relation(fields: [userId], references: [id])
+  category    CustomCategory?      @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
 
   @@map("mails")
 }
@@ -113,10 +114,10 @@ model AttachmentMetaData {
   fileName    String
   contentType String
   size        Int
-  mailId      String
   storageUrl  String
-  mail        Mails  @relation(fields: [mailId], references: [id])
-
+  gmailPartId String?
+  mailId      String
+  mail        Mail   @relation(fields: [mailId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -124,20 +125,14 @@ model AttachmentMetaData {
 }
 
 model CustomCategory {
-  id                 String           @id @default(uuid())
-  name               String
-  connectedAccountId String
-  connectedAccount   ConnectedAccount @relation(fields: [connectedAccountId], references: [id])
-  emails             Mails[]
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  emails      Mail[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("custom_categories")
-}
-
-enum MailStatus {
-  PENDING
-  SENT
-  FAILED
-  RECEIVED
 }
