@@ -1,4 +1,5 @@
 import { prismaClient } from "@repo/db/client";
+import { CreateCategoryInput } from "../schemas/category.schema";
 
 export const get_categories = async (id: string) => {
   try {
@@ -81,5 +82,32 @@ export const delete_category = async (id: string, categoryId: string) => {
   } catch (error) {
     console.error("Error deleting category:", error);
     throw new Error("Failed to delete category");
+  }
+};
+
+export const create_categories = async (userId: string, categories: CreateCategoryInput[]) => {
+  try {
+    const count = await prismaClient.customCategory.count({
+      where: {
+        userId
+      }
+    });
+
+    if (count + categories.length > 4) {
+      throw new Error("You can only have up to 4 categories");
+    }
+
+    const createdCategories = await prismaClient.customCategory.createMany({
+      data: categories.map(category => ({
+        userId,
+        name: category.name,
+        description: category.description
+      }))
+    });
+
+    return createdCategories;
+  } catch (error) {
+    console.error("Error creating categories:", error);
+    throw new Error("Failed to create categories");
   }
 };

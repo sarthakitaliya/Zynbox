@@ -3,7 +3,6 @@
 import { useSession } from "@/lib/auth-client";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "@/lib/auth-client";
-import { api } from "@repo/utils/api";
 import { useEffect, useState } from "react";
 
 interface Email {
@@ -24,29 +23,6 @@ export default function Dashboard() {
   const [emails, setEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchEmails = async (accountId: string) => {
-    try {
-      setLoading(true);
-      const response = await api.get(`/auth/emails/${accountId}`);
-      setEmails(response.data.emails);
-    } catch (error) {
-      console.error("Error fetching emails:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      const res = await api.get("/auth/connect-account");
-      const { url } = res.data;
-      if (url) {
-        window.location.href = url;
-      }
-    } catch (error) {
-      console.error("Sign in error:", error);
-    }
-  };
 
   if (!session) {
     return (
@@ -116,14 +92,6 @@ export default function Dashboard() {
                     ))}
                   </div>
                 )}
-
-                <button
-                  onClick={handleGoogleSignIn}
-                  className="mt-4 w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  <FcGoogle className="mr-2 h-5 w-5" />
-                  Connect Another Google Account
-                </button>
               </div>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { RequireAuth } from "@/components/RequireAuth";
+import { useCategoryStore } from "@repo/store";
 
 interface Category {
   name: string;
@@ -40,7 +41,7 @@ export default function SetupCategories() {
       .length;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!validateCurrentCategory()) return;
 
     if (currentStep < categories.length - 1) {
@@ -49,23 +50,40 @@ export default function SetupCategories() {
       setCategories([...categories, { name: "", description: "" }]);
       setCurrentStep(currentStep + 1);
     } else {
-      router.push("/dashboard");
+      try {
+        const completedCategories = categories.filter(
+          (cat) => cat.name.trim() && cat.description.trim()
+        );
+        
+        await createCategories(completedCategories);
+        router.push("/dashboard");
+      } catch (error) {
+        setError("Failed to save categories. Please try again.");
+      }
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     if (getCompletedCategories() < 2) {
       setError("Please complete at least 2 categories before skipping");
       return;
     }
-    router.push("/dashboard");
+    try {
+      const completedCategories = categories.filter(
+        (cat) => cat.name.trim() && cat.description.trim()
+      );
+      await createCategories(completedCategories);
+      router.push("/dashboard");
+    } catch (error) {
+      setError("Failed to skip categories. Please try again.");
+    }
   };
 
   const currentCategory = categories[currentStep];
   const completedCategories = getCompletedCategories();
   const canSkip = completedCategories >= 2;
   const isLastStep = currentStep === categories.length - 1;
-
+  const { createCategories } = useCategoryStore();
   return (
     <RequireAuth>
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">

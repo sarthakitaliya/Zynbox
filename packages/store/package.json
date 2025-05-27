@@ -1,15 +1,16 @@
 {
-  "name": "@repo/utils",
+  "name": "@repo/store",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "exports": {
-    "./api": "./api.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@repo/api-client": "workspace:*",
     "@repo/typescript-config": "workspace:*"
   },
   "keywords": [],
@@ -17,6 +18,6 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "axios": "^1.9.0"
+    "zustand": "^5.0.5"
   }
 }
