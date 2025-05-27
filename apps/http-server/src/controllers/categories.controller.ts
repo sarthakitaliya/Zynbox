@@ -74,7 +74,6 @@ export const deleteCategory = async (req: Request, res: Response, next: NextFunc
 
 export const createCategories = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log(req.body);
     const validationResult = createCategoriesSchema.safeParse(req.body);
     
     if (!validationResult.success) {
