@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { create_category, delete_category, get_categories, update_category } from "../services/categories.service";
+import { create_category, delete_category, get_categories, update_category, create_categories, check_categories } from "../services/categories.service";
 import { ValidationError, NotFoundError } from "../utils/errors";
+import { createCategorySchema, updateCategorySchema, createCategoriesSchema } from "../schemas/category.schema";
 
 export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -11,14 +12,24 @@ export const getCategories = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+export const checkCategories = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const hasCategories = await check_categories(req.user.id);
+    res.json({ hasCategories });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, description } = req.body;
-    
-    if (!name) {
-      throw new ValidationError("Category name is required");
+    const validationResult = createCategorySchema.safeParse(req.body);
+    if (!validationResult.success) {
+      const errorMessage = validationResult.error.errors[0]?.message || "Invalid input";
+      throw new ValidationError(errorMessage);
     }
 
+    const { name, description } = validationResult.data;
     const category = await create_category(req.user.id, name, description);
     res.status(201).json(category);
   } catch (error) {
@@ -29,15 +40,16 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
 export const updateCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { categoryId } = req.params;
-    const { name, description } = req.body;
-
     if (!categoryId) {
       throw new ValidationError("Category ID is required");
     }
-
-    if (!name) {
-      throw new ValidationError("Category name is required");
+    const validationResult = updateCategorySchema.safeParse(req.body);
+    if (!validationResult.success) {
+      const errorMessage = validationResult.error.errors[0]?.message || "Invalid input";
+      throw new ValidationError(errorMessage);
     }
+
+    const { name, description } = validationResult.data;
 
     const category = await update_category(req.user.id, categoryId, name, description);
     if (!category) {
@@ -53,7 +65,7 @@ export const updateCategory = async (req: Request, res: Response, next: NextFunc
 export const deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { categoryId } = req.params;
-    
+
     if (!categoryId) {
       throw new ValidationError("Category ID is required");
     }
@@ -64,6 +76,22 @@ export const deleteCategory = async (req: Request, res: Response, next: NextFunc
     }
 
     res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createCategories = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const validationResult = createCategoriesSchema.safeParse(req.body);
+    
+    if (!validationResult.success) {
+      const errorMessage = validationResult.error.errors[0]?.message || "Invalid input";
+      throw new ValidationError(errorMessage);
+    }
+
+    const categories = await create_categories(req.user.id, validationResult.data.categories);
+    res.status(201).json(categories);
   } catch (error) {
     next(error);
   }

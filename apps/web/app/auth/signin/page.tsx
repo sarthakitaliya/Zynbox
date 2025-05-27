@@ -18,7 +18,7 @@ export default function SignIn() {
       setIsLoading(true);
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL: "/setup-categories",
         errorCallbackURL: "/auth/error",
         scopes: [
           "https://www.googleapis.com/auth/userinfo.email",
