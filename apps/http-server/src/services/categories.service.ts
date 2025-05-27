@@ -15,6 +15,20 @@ export const get_categories = async (id: string) => {
   }
 }
 
+export const check_categories = async (id: string) => {
+  try {
+    const count = await prismaClient.customCategory.count({
+      where: {
+        userId: id
+      }
+    });
+    return count > 0;
+  } catch (error) {
+    console.error("Error checking categories:", error);
+    throw new Error("Failed to check categories");
+  }
+}
+
 export const create_category = async (id: string, name: string, description?: string) => {
   try {
     const count = await prismaClient.customCategory.count({

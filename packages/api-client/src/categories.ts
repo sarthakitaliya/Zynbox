@@ -53,6 +53,15 @@ const getCategories = async (): Promise<Category[]> => {
   }
 };
 
+const checkCategories = async (): Promise<boolean> => {
+  try {
+    const response = await api.get<{ hasCategories: boolean }>("/categories/setup-status");
+    return response.data.hasCategories;
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
 const createCategory = async (category: CategoryInput): Promise<Category> => {
   validateCategory(category);
 
@@ -102,6 +111,7 @@ const deleteCategory = async (categoryId: string): Promise<void> => {
 }
 
 export const apiCategory = {
+  checkCategories,
   getCategories,
   createCategory,
   createCategories,

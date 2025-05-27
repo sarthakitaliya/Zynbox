@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { create_category, delete_category, get_categories, update_category, create_categories } from "../services/categories.service";
+import { create_category, delete_category, get_categories, update_category, create_categories, check_categories } from "../services/categories.service";
 import { ValidationError, NotFoundError } from "../utils/errors";
 import { createCategorySchema, updateCategorySchema, createCategoriesSchema } from "../schemas/category.schema";
 
@@ -7,6 +7,15 @@ export const getCategories = async (req: Request, res: Response, next: NextFunct
   try {
     const categories = await get_categories(req.user.id);
     res.json(categories);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const checkCategories = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const hasCategories = await check_categories(req.user.id);
+    res.json({ hasCategories });
   } catch (error) {
     next(error);
   }

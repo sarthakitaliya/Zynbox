@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { RequireAuth } from "@/components/RequireAuth";
@@ -19,6 +19,31 @@ export default function SetupCategories() {
   ]);
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState("");
+  const [checkingCategorys, setCheckingCategories] = useState(true);
+  const { createCategories, checkCategories } = useCategoryStore();
+
+  useEffect(() => {
+    const checkIfUserHasCategories = async () => {
+      const hasCategories: boolean = await checkCategories();
+      if (hasCategories) {
+        router.push("/dashboard");
+      } else {
+        setCheckingCategories(false);
+      }
+    };
+    checkIfUserHasCategories();
+  }, []);
+
+  if (checkingCategorys) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const updateCategory = (field: keyof Category, value: string) => {
     const newCategories = [...categories];
@@ -54,7 +79,7 @@ export default function SetupCategories() {
         const completedCategories = categories.filter(
           (cat) => cat.name.trim() && cat.description.trim()
         );
-        
+
         await createCategories(completedCategories);
         router.push("/dashboard");
       } catch (error) {
@@ -83,7 +108,7 @@ export default function SetupCategories() {
   const completedCategories = getCompletedCategories();
   const canSkip = completedCategories >= 2;
   const isLastStep = currentStep === categories.length - 1;
-  const { createCategories } = useCategoryStore();
+
   return (
     <RequireAuth>
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
