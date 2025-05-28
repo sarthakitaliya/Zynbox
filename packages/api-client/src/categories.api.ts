@@ -77,6 +77,8 @@ const createCategories = async (categories: CategoryInput[]): Promise<Category[]
   validateCategories(categories);
 
   try {
+    console.log("Creating categories:", categories);
+    
     const response = await api.post<Category[]>("/categories/bulk", { categories });
     return response.data;
   } catch (error) {

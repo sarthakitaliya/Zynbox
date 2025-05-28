@@ -83,6 +83,7 @@ export default function SetupCategories() {
         await createCategories(completedCategories);
         router.push("/dashboard");
       } catch (error) {
+        console.error("Failed to save categories", error);
         setError("Failed to save categories. Please try again.");
       }
     }
@@ -100,6 +101,7 @@ export default function SetupCategories() {
       await createCategories(completedCategories);
       router.push("/dashboard");
     } catch (error) {
+      console.error("Failed to skip categories", error);
       setError("Failed to skip categories. Please try again.");
     }
   };
