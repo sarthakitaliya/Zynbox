@@ -1,2 +1,2 @@
-export { apiCategory } from "./categories.ts";
+export { apiCategory } from "./categories.api.ts";
 

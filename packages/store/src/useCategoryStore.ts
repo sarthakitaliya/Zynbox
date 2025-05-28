@@ -45,6 +45,7 @@ export const useCategoryStore = create<State>((set) => ({
       const newCategories = await apiCategory.createCategories(categoriesData);
       set((state) => ({ categories: [...state.categories, ...newCategories] }));
     } catch (error) {
+      console.error("Failed to create categories", error);
       setError("Failed to create categories");
       throw error;
     } finally {

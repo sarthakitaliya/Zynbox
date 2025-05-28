@@ -111,14 +111,21 @@ export const create_categories = async (userId: string, categories: CreateCatego
       throw new Error("You can only have up to 4 categories");
     }
 
-    const createdCategories = await prismaClient.customCategory.createMany({
-      data: categories.map(category => ({
-        userId,
-        name: category.name,
-        description: category.description
-      }))
-    });
+    const categoryData = categories.map(category => ({
+      userId,
+      name: category.name,
+      description: category.description
+    }));
 
+    // Create categories one by one to get the full objects back
+    const createdCategories = await Promise.all(
+      categoryData.map(data => 
+        prismaClient.customCategory.create({
+          data
+        })
+      )
+    );
+    
     return createdCategories;
   } catch (error) {
     console.error("Error creating categories:", error);
