@@ -3,13 +3,14 @@
 import { FcGoogle } from "react-icons/fc";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useRouter } from "next/navigation";
-import { useCategoryStore, useUserStore } from "@repo/store";
+import { useCategoryStore, useUserStore, useEmailStore } from "@repo/store";
 import { useEffect, useState } from "react";
 
 export default function Dashboard() {
   const { user } = useUserStore();
   const [checkingCategorys, setCheckingCategories] = useState(true);
-  const { createCategories, checkCategories } = useCategoryStore();
+  const { checkCategories } = useCategoryStore();
+  const { getInbox } = useEmailStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -19,6 +20,7 @@ export default function Dashboard() {
         router.push("/setup-categories");
       } else {
         setCheckingCategories(false);
+        await getInbox()
       }
     };
     checkIfUserHasCategories();

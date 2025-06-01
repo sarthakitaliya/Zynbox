@@ -33,14 +33,15 @@ export function getOAuthClient(): any {
   return oauth2Client;
 }
 
-export async function getGmailClient(userId: string){
-  const user = await prismaClient.account.findUnique({
-    where: { id: userId },
+export async function getGmailClient(userId: string) {
+  const user = await prismaClient.account.findFirst({
+    where: { userId },
     select: {
       accessToken: true,
       refreshToken: true,
     },
   });
+  console.log(user);
   if (!user || !user.accessToken || !user.refreshToken) {
     throw new Error("User does not have Google tokens");
   }

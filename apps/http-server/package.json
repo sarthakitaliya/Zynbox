@@ -19,6 +19,7 @@
   "dependencies": {
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
+    "@types/md5": "^2.3.5",
     "axios": "^1.9.0",
     "better-auth": "^1.2.8",
     "cookie-parser": "^1.4.7",
@@ -26,6 +27,7 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "googleapis": "^149.0.0",
+    "md5": "^2.3.0",
     "zod": "^3.25.28"
   }
 }
