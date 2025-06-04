@@ -1,10 +1,11 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { handleError } from '../utils/errors';
 
 export const errorHandler = (
   err: Error,
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const error = handleError(err);
   

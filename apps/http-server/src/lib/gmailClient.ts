@@ -52,6 +52,7 @@ export class gmailClient {
         return parseEmail(res.data);  
       })
     );
+    console.log("Fetched messages metadata:", metadata);
     return metadata;
   } catch (error) {
     console.error("Error listing messages:", error);
@@ -98,4 +99,32 @@ async getMessage(messageId: string) {
     }
   }
 
+  async getStarredEmails(maxResults: number = 10): Promise<any[]> {
+    try {
+      const response = await this.gmail.users.messages.list({
+        userId: "me",
+        q: "is:starred",
+        maxResults,
+      });
+
+      const messages = response.data.messages || [];
+
+      const metadata = await Promise.all(
+        messages.map(async (msg: any) => {
+          const res = await this.gmail.users.messages.get({
+            userId: "me",
+            id: msg.id!,
+            format: "metadata",
+            metadataHeaders: ["Subject", "From", "To", "Date"],
+          });
+
+          return parseEmail(res.data);
+        })
+      );
+      return metadata;
+    } catch (error) {
+      console.error("Error listing starred messages:", error);
+      throw new Error("Failed to list starred messages");
+    }
+  }
 }

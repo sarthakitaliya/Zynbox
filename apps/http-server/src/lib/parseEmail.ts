@@ -16,6 +16,7 @@ export interface ParsedEmail {
   date?: string;
   labelIds?: string[];
   body?: string;
+  senderName?: string;
 }
 
 function extractHeader(headers: GmailHeader[], key: string): string | undefined {
@@ -31,6 +32,20 @@ function extractEmail(fromValue: string): string {
 function getGravatarUrl(email: string): string {
   const hash = md5(email.trim().toLowerCase());
   return `https://www.gravatar.com/avatar/${hash}?d=identicon`;
+}
+
+function extractSenderName(fromValue: string): string {
+  const match = fromValue.match(/^(.*?)</);
+  return match && match[1] ? match[1].trim().replace(/"|'/g, '') : fromValue;
+}
+
+function formatEmailDate(rawDate?: string): string | undefined {
+  if (!rawDate) return undefined;
+  const date = new Date(rawDate);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+  }); // e.g., "Jun 02"
 }
 
 function extractBody(payload: any): string {
@@ -54,25 +69,27 @@ function extractBody(payload: any): string {
   return "";
 }
 
-export function parseEmail(fullMessage: any): ParsedEmail {
-  const headers: GmailHeader[] = fullMessage.payload.headers || [];
+export function parseEmail(mail: any): ParsedEmail {
+  const headers: GmailHeader[] = mail.payload.headers || [];
   const from = extractHeader(headers, "From") || "(Unknown)";
   const to = extractHeader(headers, "To");
   const subject = extractHeader(headers, "Subject") || "(No Subject)";
-  const date = extractHeader(headers, "Date");
+  const date = formatEmailDate(extractHeader(headers, "Date"));
   const senderEmail = extractEmail(from);
   const profileImage = getGravatarUrl(senderEmail);
+  const senderName = extractSenderName(from);
 
   return {
-    id: fullMessage.id,
-    snippet: fullMessage.snippet,
+    id: mail.id,
+    snippet: mail.snippet,
     from,
     senderEmail,
+    senderName,
     profileImage,
     to,
     subject,
     date,
-    labelIds: fullMessage.labelIds,
-    body: extractBody(fullMessage.payload)
+    labelIds: mail.labelIds,
+    body: extractBody(mail.payload)
   };
 }
