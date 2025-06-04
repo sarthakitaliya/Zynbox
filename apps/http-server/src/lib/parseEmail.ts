@@ -69,8 +69,8 @@ function extractBody(payload: any): string {
   return "";
 }
 
-export function parseEmail(fullMessage: any): ParsedEmail {
-  const headers: GmailHeader[] = fullMessage.payload.headers || [];
+export function parseEmail(mail: any): ParsedEmail {
+  const headers: GmailHeader[] = mail.payload.headers || [];
   const from = extractHeader(headers, "From") || "(Unknown)";
   const to = extractHeader(headers, "To");
   const subject = extractHeader(headers, "Subject") || "(No Subject)";
@@ -80,8 +80,8 @@ export function parseEmail(fullMessage: any): ParsedEmail {
   const senderName = extractSenderName(from);
 
   return {
-    id: fullMessage.id,
-    snippet: fullMessage.snippet,
+    id: mail.id,
+    snippet: mail.snippet,
     from,
     senderEmail,
     senderName,
@@ -89,7 +89,7 @@ export function parseEmail(fullMessage: any): ParsedEmail {
     to,
     subject,
     date,
-    labelIds: fullMessage.labelIds,
-    body: extractBody(fullMessage.payload)
+    labelIds: mail.labelIds,
+    body: extractBody(mail.payload)
   };
 }

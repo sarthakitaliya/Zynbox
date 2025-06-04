@@ -120,7 +120,17 @@ export const MailList = ({ folder }: { folder: ParamValue }) => {
             ))}
           </>
         ) : (
-          emails.map((email) => <Email key={email.id} email={email} />)
+          <div className="py-2">
+            {emails.length > 0 ? (
+              emails.map((email) => (
+                <Email key={email.id} email={email} />
+              ))
+            ) : (
+              <div className="text-center text-gray-500">
+                No emails found.
+              </div>
+            )}
+          </div>          
         )}
       </div>
     </div>
