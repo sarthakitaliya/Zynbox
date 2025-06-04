@@ -1,3 +1,5 @@
+import { useEmailStore } from "@repo/store";
+
 export const Email = ({ email }: {
     email: {
         id: string;
@@ -14,8 +16,14 @@ export const Email = ({ email }: {
         read: boolean;
     };
 }) => {
+  const { getFullEmail } = useEmailStore(); 
+  const handleClick = () => {
+    console.log(`Selected email ID: ${email.id}`);
+    getFullEmail(email.id);
+  };
+
   return (
-    <div className="flex items-center space-x-3 p-4 m-2 hover:bg-zinc-800 rounded-lg" onClick={() => console.log(`Selected email ID: ${email.id}`)}>
+    <div className="flex items-center space-x-3 p-4 m-2 hover:bg-zinc-800 rounded-lg" onClick={handleClick}>
       <img src={email.avatar} alt="avatar" className="w-10 h-10 rounded-full" />
       <div className="flex-1">
         <div className="flex justify-between items-center">

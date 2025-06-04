@@ -16,3 +16,15 @@ export const getInbox = async (userId: string) => {
     throw new Error("Failed to fetch inbox");
   }
 };
+
+export const getEmailById = async (userId: string, emailId: string) => {
+  try {
+    const g = new gmailClient();
+    await g.init(userId);
+    const email = await g.getFullMessage(emailId);
+    return email;
+  } catch (error) {
+    console.error("Error fetching email:", error);
+    throw new Error("Failed to fetch email");
+  }
+};

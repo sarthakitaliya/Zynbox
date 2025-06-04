@@ -52,6 +52,7 @@ export class gmailClient {
         return parseEmail(res.data);  
       })
     );
+    console.log("Fetched messages metadata:", metadata);
     return metadata;
   } catch (error) {
     console.error("Error listing messages:", error);

@@ -1,10 +1,12 @@
-import express, { Router } from "express";
-import { getInbox } from "../controllers/emails.controller.js";
+import express from "express";
+import { getFullEmail, getInbox } from "../controllers/emails.controller.js";
 
-
-const router: Router = express.Router();
+const router: express.Router = express.Router();
 
 router.get("/inbox", getInbox);
+
+router.get("/body", getFullEmail);
+
 // router.get("/starred");
 // router.get("/archived");
 // router.get("/drafts");
