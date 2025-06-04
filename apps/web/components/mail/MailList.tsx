@@ -1,6 +1,9 @@
 import { ParamValue } from "next/dist/server/request/params";
 import { MailNavbar } from "./MailNavbar";
 import { Email } from "./Email";
+import { useEffect } from "react";
+import { useEmailStore, useUIStore } from "@repo/store";
+import { EmailSkeleton } from "./EmailListSkeleton";
 
 const dummyEmails = [
   {
@@ -90,13 +93,35 @@ const dummyEmails = [
 ];
 
 export const MailList = ({ folder }: { folder: ParamValue }) => {
+  const { getInbox, setEmails, emails } = useEmailStore();
+  const { loading } = useUIStore();
+
+  useEffect(() => {
+    console.log("Fetching emails for folder:", folder);
+
+    const fetchEmails = async () => {
+      try {
+        const res: any[] = await getInbox();
+        setEmails(res);
+      } catch (error) {
+        console.error("Failed to fetch emails:", error);
+      }
+    };
+    fetchEmails();
+  }, [getInbox]);
   return (
     <div>
       <MailNavbar />
       <div className="mt-5">
-        {dummyEmails.map((email) => (
-          <Email key={email.id} email={email} />
-        ))}
+        {loading ? (
+          <>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <EmailSkeleton key={i} />
+            ))}
+          </>
+        ) : (
+          emails.map((email) => <Email key={email.id} email={email} />)
+        )}
       </div>
     </div>
   );

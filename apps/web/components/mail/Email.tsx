@@ -2,6 +2,7 @@ export const Email = ({ email }: {
     email: {
         id: string;
         sender: string;
+        senderName: string;
         email: string;
         avatar: string;
         subject: string;
@@ -18,11 +19,10 @@ export const Email = ({ email }: {
       <img src={email.avatar} alt="avatar" className="w-10 h-10 rounded-full" />
       <div className="flex-1">
         <div className="flex justify-between items-center">
-          <h3 className="text-white font-medium">{email.sender}</h3>
+          <h3 className="text-white font-medium">{email.senderName}</h3>
           <span className="text-xs text-gray-400">{email.date}</span>
         </div>
-        <p className="text-sm text-gray-300 truncate">{email.subject}</p>
-        <p className="text-xs text-gray-500 truncate">{email.preview}</p>
+        <p className="max-w-[20vw] text-xs text-gray-500 truncate">{email.subject}</p>
       </div>
     </div>
   );

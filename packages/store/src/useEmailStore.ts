@@ -5,6 +5,15 @@ import { useUIStore } from "./useUIStore.ts";
 const { setLoading, setError, setMessage } = useUIStore.getState();
 export const useEmailStore = create<State>((set) => ({
   emails: [],
+  setEmails: (emails) => {
+    console.log("Setting emails:", emails);
+    set({ emails });
+  },
+  clearEmails: () => {
+    console.log("Clearing emails");
+    set({ emails: [] });
+    set({ selectedEmail: null });
+  },
   selectedEmail: null,
   setSelectedEmail: (email) => {
     console.log("Setting selected email:", email);
@@ -32,8 +41,10 @@ export const useEmailStore = create<State>((set) => ({
 }));
 interface State {
   emails: any[];
+  setEmails: (emails: any[]) => void;
+  clearEmails: () => void;
   selectedEmail: any | null;
   setSelectedEmail: (email: any) => void;
   clearSelectedEmail: () => void;
-  getInbox: () => Promise<void>;
+  getInbox: () => Promise<any[]>;
 }
