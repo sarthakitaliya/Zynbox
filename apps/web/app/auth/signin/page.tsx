@@ -11,7 +11,7 @@ export default function SignIn() {
   const {data: session} = authClient.useSession();
   const router = useRouter();
   if (session) {
-    router.push("/dashboard");
+    router.push("/mail/inbox");
   }
   const handleGoogleSignIn = async () => {
     try {
