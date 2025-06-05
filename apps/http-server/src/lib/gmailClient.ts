@@ -52,7 +52,6 @@ export class gmailClient {
         return parseEmail(res.data);  
       })
     );
-    console.log("Fetched messages metadata:", metadata);
     return metadata;
   } catch (error) {
     console.error("Error listing messages:", error);
@@ -91,6 +90,16 @@ async getMessage(messageId: string) {
         console.error("Invalid response from Gmail API:", response);
         throw new Error("Invalid response from Gmail API");
       }
+      const html = Buffer.from(response.data.payload?.parts[1]?.body?.data || "", "base64").toString("utf-8");
+      const text = Buffer.from(response.data.payload?.parts[0]?.body?.data || "", "base64").toString("utf-8");
+
+      console.log("Fetched full message:", response.data);
+      console.log("headers",response.data.payload?.headers);
+      console.log("body",response.data.payload?.parts);
+      console.log("html body", html);
+      console.log("text body", text);
+
+      
       
       return parseEmail(response.data);
     } catch (error) {

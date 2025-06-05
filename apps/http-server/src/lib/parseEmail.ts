@@ -1,4 +1,6 @@
 import md5 from "md5";
+// Removed DOMPurify imports
+import linkifyHtml from "linkify-html";
 
 interface GmailHeader {
   name: string;
@@ -15,7 +17,10 @@ export interface ParsedEmail {
   subject: string;
   date?: string;
   labelIds?: string[];
-  body?: string;
+  body?: {
+    content: string;
+    type: "html" | "plain";
+  };
   senderName?: string;
 }
 
@@ -48,25 +53,45 @@ function formatEmailDate(rawDate?: string): string | undefined {
   }); // e.g., "Jun 02"
 }
 
-function extractBody(payload: any): string {
-  const parts = payload?.parts || [];
+function extractBody(payload: any): { content: string; type: "html" | "plain" } {
+  let htmlContent: string | null = null;
+  let plainContent: string | null = null;
 
-  for (const part of parts) {
-    if (part.mimeType === "text/plain" && part.body?.data) {
-      return Buffer.from(part.body.data, "base64").toString("utf-8");
-    }
+  const walkParts = (node: any) => {
+    const parts = node?.parts || [];
+    for (const part of parts) {
+      if (part.mimeType === "text/html" && part.body?.data) {
+        const html = Buffer.from(part.body.data, "base64").toString("utf-8");
+        htmlContent = html;
+      }
 
-    if (part.parts) {
-      const inner = extractBody(part);
-      if (inner) return inner;
+      if (part.mimeType === "text/plain" && part.body?.data) {
+        const text = Buffer.from(part.body.data, "base64").toString("utf-8");
+        const linkified = linkifyHtml(text.replace(/\r?\n/g, "<br>"), { target: "_blank" });
+        plainContent = linkified;
+      }
+
+      if (part.parts) walkParts(part);
     }
-  }
+  };
+
+  walkParts(payload);
+
+  if (htmlContent) return { content: htmlContent, type: "html" };
+  if (plainContent) return { content: plainContent, type: "plain" };
 
   if (payload.body?.data) {
-    return Buffer.from(payload.body.data, "base64").toString("utf-8");
+    const fallback = Buffer.from(payload.body.data, "base64").toString("utf-8");
+    const type = payload.mimeType === "text/html" ? "html" : "plain";
+    if (type === "html") {
+      return { content: fallback, type: "html" };
+    } else {
+      const linkified = linkifyHtml(fallback.replace(/\r?\n/g, "<br>"), { target: "_blank" });
+      return { content: linkified, type: "plain" };
+    }
   }
 
-  return "";
+  return { content: "", type: "plain" };
 }
 
 export function parseEmail(mail: any): ParsedEmail {
