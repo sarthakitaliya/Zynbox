@@ -93,8 +93,7 @@ const dummyEmails = [
 ];
 
 export const MailList = ({ folder }: { folder: ParamValue }) => {
-  const { getInbox, setEmails, emails } = useEmailStore();
-  const { loading } = useUIStore();
+  const { getInbox, setEmails, emails, loadingList } = useEmailStore();
 
   useEffect(() => {
     console.log("Fetching emails for folder:", folder);
@@ -113,12 +112,25 @@ export const MailList = ({ folder }: { folder: ParamValue }) => {
   return (
     <div>
       <MailNavbar />
-
-      <div className="py-2">
-        {emails.length > 0 ? (
-          emails.map((email) => <Email key={email.id} email={email} />)
+      <div className="mt-5">
+        {loadingList ? (
+          <>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <EmailSkeleton key={i} />
+            ))}
+          </>
         ) : (
-          <div className="text-center text-gray-500">No emails found.</div>
+          <div className="py-2">
+            {emails.length > 0 ? (
+              emails.map((email) => (
+                <Email key={email.id} email={email} />
+              ))
+            ) : (
+              <div className="text-center text-gray-500">
+                No emails found.
+              </div>
+            )}
+          </div>          
         )}
       </div>
     </div>

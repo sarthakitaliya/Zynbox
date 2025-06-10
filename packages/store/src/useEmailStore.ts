@@ -21,6 +21,7 @@ interface Email {
 
 interface State {
   emails: Email[];
+  loadingList: boolean;
   setEmails: (emails: Email[]) => void;
   clearEmails: () => void;
   selectedEmail: Email | null;
@@ -32,6 +33,7 @@ interface State {
 
 export const useEmailStore = create<State>((set) => ({
   emails: [],
+  loadingList: false,
   setEmails: (emails) => {
     console.log("Setting emails:", emails);
     set({ emails });
@@ -57,7 +59,7 @@ export const useEmailStore = create<State>((set) => ({
   },
   getInbox: async () => {
     try {
-      setLoading(true);
+      set({ loadingList: true });
       const res = await apiEmail.getInbox();
       console.log("Fetched inbox emails:", res);
       set({ emails: res });
@@ -67,7 +69,7 @@ export const useEmailStore = create<State>((set) => ({
       setError("Failed to fetch inbox emails");
       throw error;
     } finally {
-      setLoading(false);
+      set({ loadingList: false });
     }
   },
   getFullEmail: async (threadId: string) => {
