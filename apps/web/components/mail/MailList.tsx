@@ -93,14 +93,14 @@ const dummyEmails = [
 ];
 
 export const MailList = ({ folder }: { folder: ParamValue }) => {
-  const { getInbox, setEmails, emails, loadingList } = useEmailStore();
+  const { getEmails, setEmails, emails, loadingList } = useEmailStore();
 
   useEffect(() => {
     console.log("Fetching emails for folder:", folder);
 
     const fetchEmails = async () => {
       try {
-        const res: any[] = await getInbox();
+        const res: any[] = await getEmails(folder as string);
         setEmails(res);
       } catch (error) {
         console.error("Failed to fetch emails:", error);

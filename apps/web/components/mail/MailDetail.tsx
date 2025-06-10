@@ -3,13 +3,15 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export const MailDetail = () => {
-  const { selectedEmail, getFullEmail } = useEmailStore();
+  const { selectedEmail, getFullEmail, setSelectedEmail } = useEmailStore();
   console.log(selectedEmail);
   const searchParams = useSearchParams();
   const mailId = searchParams.get("threadId");
   useEffect(() => {
     if (mailId && selectedEmail?.id !== mailId) {
       getFullEmail(mailId);
+    }else if (!mailId) {
+      setSelectedEmail(null);
     }
   }, [mailId]);
   return (

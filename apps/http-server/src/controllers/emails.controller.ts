@@ -1,10 +1,21 @@
 import { Request, Response } from "express";
 import * as emailService from "../services/email.service";
 
-export const getInbox = async (req: Request, res: Response) => {
+export const getEmails = async (req: Request, res: Response) => {
   try {
-    console.log("Fetching inbox for user:", req.user.id);
-    const emails = await emailService.getInbox(req.user.id);
+    const { filter = "inbox" } = req.query;
+    
+    const queryMap: Record<string, string> = {
+      inbox: "", 
+      starred: "is:starred",
+      sent: "in:sent",
+      drafts: "in:drafts",
+      spam: "in:spam",
+      trash: "in:trash",
+      archived: "is:archived",
+    };
+    const gmailQuery = queryMap[filter as string] || "";
+    const emails = await emailService.getEmails(req.user.id, gmailQuery);
     console.log("Fetched inbox emails:", emails);
     res.status(200).json(emails);
   } catch (error) {
@@ -12,7 +23,10 @@ export const getInbox = async (req: Request, res: Response) => {
   }
 };
 
-export const getFullEmail = async (req: Request<{}, {}, {}, { threadId?: string }>, res: Response) => {
+export const getFullEmail = async (
+  req: Request<{}, {}, {}, { threadId?: string }>,
+  res: Response
+) => {
   try {
     const { threadId } = req.query;
     if (!threadId) {

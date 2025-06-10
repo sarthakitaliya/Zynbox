@@ -25,9 +25,9 @@ interface State {
   setEmails: (emails: Email[]) => void;
   clearEmails: () => void;
   selectedEmail: Email | null;
-  setSelectedEmail: (email: Email) => void;
+  setSelectedEmail: (email: Email | null) => void;
   clearSelectedEmail: () => void;
-  getInbox: () => Promise<Email[]>;
+  getEmails: (filter: string) => Promise<Email[]>;
   getFullEmail: (threadId: string) => Promise<Email>;
 }
 
@@ -45,6 +45,11 @@ export const useEmailStore = create<State>((set) => ({
   },
   selectedEmail: null,
   setSelectedEmail: (email) => {
+    if (!email) {
+      console.log("No email selected, clearing selected email");
+      set({ selectedEmail: null });
+      return;
+    }
     console.log("Setting selected email:", email);
     set((state) => ({
       selectedEmail: email,
@@ -57,16 +62,16 @@ export const useEmailStore = create<State>((set) => ({
     console.log("Clearing selected email");
     set({ selectedEmail: null });
   },
-  getInbox: async () => {
+  getEmails: async (filter) => {
     try {
       set({ loadingList: true });
-      const res = await apiEmail.getInbox();
-      console.log("Fetched inbox emails:", res);
+      const res = await apiEmail.getEmails(filter);
+      console.log("Fetched emails:", res);
       set({ emails: res });
       return res;
     } catch (error) {
-      console.error("Failed to fetch inbox emails", error);
-      setError("Failed to fetch inbox emails");
+      console.error("Failed to fetch emails", error);
+      setError("Failed to fetch emails");
       throw error;
     } finally {
       set({ loadingList: false });

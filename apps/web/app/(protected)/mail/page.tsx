@@ -13,12 +13,16 @@ export default function Dashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedEmailId = searchParams.get('emailId');
-  const { getInbox, getFullEmail, setSelectedEmail, clearSelectedEmail } = useEmailStore();
+  const { getEmails, getFullEmail, setSelectedEmail, clearSelectedEmail } = useEmailStore();
 
   // Load emails on mount
   useEffect(() => {
-    getInbox();
-  }, [getInbox]);
+    const view = searchParams.get('view') || 'inbox';
+    const filter = view === 'inbox' ? '' : view; // Adjust filter based on view
+    getEmails(filter).catch((error) => {
+      console.error("Failed to fetch emails:", error);
+    });
+  }, [getEmails]);
 
   // Handle email selection
   useEffect(() => {
