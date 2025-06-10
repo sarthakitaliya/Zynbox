@@ -6,17 +6,17 @@ export const Email = ({
 }: {
   email: {
     id: string;
-  from: string;
-  subject: string;
-  snippet: string;
-  date: string;
-  category: string;
-  read: boolean;
-  body?: string;
-  profileImage?: string;
-  senderEmail?: string;
-  senderName?: string;
-  to: string;
+    from: string;
+    subject: string;
+    snippet: string;
+    date: string;
+    category: string;
+    read: boolean;
+    body?: string;
+    profileImage?: string;
+    senderEmail?: string;
+    senderName?: string;
+    to: string;
   };
 }) => {
   const { getFullEmail, setSelectedEmail } = useEmailStore();
@@ -29,10 +29,12 @@ export const Email = ({
 
   return (
     <div
-      className="flex items-center space-x-3 p-4 m-2 hover:bg-zinc-800 rounded-lg"
+      className="flex items-center space-x-3 p-4 m-2 hover:bg-zinc-800 rounded-lg cursor-pointer"
       onClick={handleClick}
     >
-      <img src={email.profileImage} alt="avatar" className="w-10 h-10 rounded-full" />
+      <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-bold uppercase">
+        {email.senderName?.charAt(0) ?? "?"}
+      </div>
       <div className="flex-1">
         <div className="flex justify-between items-center">
           <h3 className="text-white font-medium">{email.senderName}</h3>

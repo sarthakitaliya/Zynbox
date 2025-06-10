@@ -7,7 +7,7 @@ export const getEmails = async (userId: string, query: string) => {
     await g.init(userId);
     console.log("Gmail client initialized for user:", userId);
 
-    const messages = await g.listEmails(query, 10);
+    const messages = await g.listEmails(query, 20);
     console.log("Fetched messages:", messages);
 
     return messages;

@@ -100,6 +100,9 @@ export const MailList = ({ folder }: { folder: ParamValue }) => {
 
     const fetchEmails = async () => {
       try {
+        if (emails.length > 0) {
+          setEmails([]); 
+        }
         const res: any[] = await getEmails(folder as string);
         setEmails(res);
       } catch (error) {
@@ -111,8 +114,10 @@ export const MailList = ({ folder }: { folder: ParamValue }) => {
 
   return (
     <div>
-      <MailNavbar />
-      <div className="mt-5">
+      <div className="sticky top-0 z-10">
+        <MailNavbar />
+      </div>
+      <div>
         {loadingList ? (
           <>
             {Array.from({ length: 8 }).map((_, i) => (
@@ -122,15 +127,11 @@ export const MailList = ({ folder }: { folder: ParamValue }) => {
         ) : (
           <div className="py-2">
             {emails.length > 0 ? (
-              emails.map((email) => (
-                <Email key={email.id} email={email} />
-              ))
+              emails.map((email) => <Email key={email.id} email={email} />)
             ) : (
-              <div className="text-center text-gray-500">
-                No emails found.
-              </div>
+              <div className="text-center text-gray-500">No emails found.</div>
             )}
-          </div>          
+          </div>
         )}
       </div>
     </div>
