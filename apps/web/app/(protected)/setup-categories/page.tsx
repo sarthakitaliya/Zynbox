@@ -99,7 +99,7 @@ export default function SetupCategories() {
         (cat) => cat.name.trim() && cat.description.trim()
       );
       await createCategories(completedCategories);
-      router.push("/dashboard");
+      router.push("/mail/inbox");
     } catch (error) {
       console.error("Failed to skip categories", error);
       setError("Failed to skip categories. Please try again.");

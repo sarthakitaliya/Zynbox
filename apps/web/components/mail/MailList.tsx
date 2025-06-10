@@ -93,27 +93,32 @@ const dummyEmails = [
 ];
 
 export const MailList = ({ folder }: { folder: ParamValue }) => {
-  const { getInbox, setEmails, emails } = useEmailStore();
-  const { loading } = useUIStore();
+  const { getEmails, setEmails, emails, loadingList } = useEmailStore();
 
   useEffect(() => {
     console.log("Fetching emails for folder:", folder);
 
     const fetchEmails = async () => {
       try {
-        const res: any[] = await getInbox();
+        if (emails.length > 0) {
+          setEmails([]); 
+        }
+        const res: any[] = await getEmails(folder as string);
         setEmails(res);
       } catch (error) {
         console.error("Failed to fetch emails:", error);
       }
     };
     fetchEmails();
-  }, [getInbox]);
+  }, [folder]);
+
   return (
     <div>
-      <MailNavbar />
-      <div className="mt-5">
-        {loading ? (
+      <div className="sticky top-0 z-10">
+        <MailNavbar />
+      </div>
+      <div>
+        {loadingList ? (
           <>
             {Array.from({ length: 8 }).map((_, i) => (
               <EmailSkeleton key={i} />
@@ -122,15 +127,11 @@ export const MailList = ({ folder }: { folder: ParamValue }) => {
         ) : (
           <div className="py-2">
             {emails.length > 0 ? (
-              emails.map((email) => (
-                <Email key={email.id} email={email} />
-              ))
+              emails.map((email) => <Email key={email.id} email={email} />)
             ) : (
-              <div className="text-center text-gray-500">
-                No emails found.
-              </div>
+              <div className="text-center text-gray-500">No emails found.</div>
             )}
-          </div>          
+          </div>
         )}
       </div>
     </div>
