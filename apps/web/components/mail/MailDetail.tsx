@@ -22,12 +22,12 @@ export const MailDetail = () => {
             {selectedEmail.subject}
           </h2>
           <p className="text-gray-400 mb-4">
-            From: {selectedEmail.senderName} &lt;{selectedEmail.email}&gt;
+            From: {selectedEmail.senderName} &lt;{selectedEmail.senderEmail}&gt;
           </p>
 
           <div className="p-4">
             <div
-              dangerouslySetInnerHTML={{ __html: selectedEmail.body.content }}
+              dangerouslySetInnerHTML={{ __html: selectedEmail.body?.content ?? "" }}
             />
           </div>
         </div>

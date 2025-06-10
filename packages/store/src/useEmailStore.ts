@@ -12,12 +12,15 @@ interface Email {
   date: string;
   category: string;
   read: boolean;
-  body?: string;
+  body?: {
+    content: string;
+    contentType: string;
+  }
   profileImage?: string;
   senderEmail?: string;
   senderName?: string;
   to: string;
-}
+} 
 
 interface State {
   emails: Email[];
