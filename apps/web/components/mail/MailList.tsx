@@ -108,29 +108,17 @@ export const MailList = ({ folder }: { folder: ParamValue }) => {
       }
     };
     fetchEmails();
-  }, [getInbox]);
+  }, [folder]);
+
   return (
     <div>
       <MailNavbar />
-      <div className="mt-5">
-        {loading ? (
-          <>
-            {Array.from({ length: 8 }).map((_, i) => (
-              <EmailSkeleton key={i} />
-            ))}
-          </>
+
+      <div className="py-2">
+        {emails.length > 0 ? (
+          emails.map((email) => <Email key={email.id} email={email} />)
         ) : (
-          <div className="py-2">
-            {emails.length > 0 ? (
-              emails.map((email) => (
-                <Email key={email.id} email={email} />
-              ))
-            ) : (
-              <div className="text-center text-gray-500">
-                No emails found.
-              </div>
-            )}
-          </div>          
+          <div className="text-center text-gray-500">No emails found.</div>
         )}
       </div>
     </div>

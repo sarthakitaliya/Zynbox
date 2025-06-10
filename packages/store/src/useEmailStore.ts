@@ -3,6 +3,33 @@ import { create } from "zustand";
 import { useUIStore } from "./useUIStore.ts";
 
 const { setLoading, setError, setMessage } = useUIStore.getState();
+
+interface Email {
+  id: string;
+  from: string;
+  subject: string;
+  snippet: string;
+  date: string;
+  category: string;
+  read: boolean;
+  body?: string;
+  profileImage?: string;
+  senderEmail?: string;
+  senderName?: string;
+  to: string;
+}
+
+interface State {
+  emails: Email[];
+  setEmails: (emails: Email[]) => void;
+  clearEmails: () => void;
+  selectedEmail: Email | null;
+  setSelectedEmail: (email: Email) => void;
+  clearSelectedEmail: () => void;
+  getInbox: () => Promise<Email[]>;
+  getFullEmail: (threadId: string) => Promise<Email>;
+}
+
 export const useEmailStore = create<State>((set) => ({
   emails: [],
   setEmails: (emails) => {
@@ -17,7 +44,12 @@ export const useEmailStore = create<State>((set) => ({
   selectedEmail: null,
   setSelectedEmail: (email) => {
     console.log("Setting selected email:", email);
-    set({ selectedEmail: email });
+    set((state) => ({
+      selectedEmail: email,
+      emails: state.emails.map((e) =>
+        e.id === email.id ? { ...e, read: true } : e
+      ),
+    }));
   },
   clearSelectedEmail: () => {
     console.log("Clearing selected email");
@@ -34,7 +66,7 @@ export const useEmailStore = create<State>((set) => ({
       console.error("Failed to fetch inbox emails", error);
       setError("Failed to fetch inbox emails");
       throw error;
-    }finally{
+    } finally {
       setLoading(false);
     }
   },
@@ -43,7 +75,15 @@ export const useEmailStore = create<State>((set) => ({
       setLoading(true);
       const res = await apiEmail.getFullEmail(threadId);
       console.log("Fetched full email:", res);
-      set({ selectedEmail: res });
+
+      // Update both selectedEmail and mark the email as read in the list
+      set((state) => ({
+        selectedEmail: res,
+        emails: state.emails.map((email) =>
+          email.id === threadId ? { ...email, read: true } : email
+        ),
+      }));
+
       return res;
     } catch (error) {
       console.error("Failed to fetch full email", error);
@@ -52,16 +92,5 @@ export const useEmailStore = create<State>((set) => ({
     } finally {
       setLoading(false);
     }
-  }
+  },
 }));
-
-interface State {
-  emails: any[];
-  setEmails: (emails: any[]) => void;
-  clearEmails: () => void;
-  selectedEmail: any | null;
-  setSelectedEmail: (email: any) => void;
-  clearSelectedEmail: () => void;
-  getInbox: () => Promise<any[]>;
-  getFullEmail: (threadId: string) => Promise<any>;
-}
