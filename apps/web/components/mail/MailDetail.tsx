@@ -51,16 +51,26 @@ export const MailDetail = () => {
             </div>
           </div>
 
-          <div>
-            <h2 className="text-white text-xl font-semibold mb-2">
-              {selectedEmail.subject}
-            </h2>
-            <p className="text-gray-400 mb-4">
-              From: {selectedEmail.senderName} &lt;{selectedEmail.senderEmail}
-              &gt;
-            </p>
-
-            <div className="p-4">
+          <div className="p-4">
+            <div className="mb-4 flex">
+              <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-bold uppercase">
+                {selectedEmail.senderName?.charAt(0) ?? "?"}
+              </div>
+              <div className="ml-3 space-y-1">
+                <h3 className="text-white font-medium">
+                  {selectedEmail.senderName || selectedEmail.from}
+                </h3>
+                <p className="text-sm  text-gray-500">
+                  To: You
+                </p>
+              </div>
+              <div className="ml-auto text-right">
+                <p className="text-md text-gray-500">
+                  {selectedEmail.date?.toLocaleString() ?? ""}
+                </p>
+              </div>
+            </div>
+            <div>
               <div
                 dangerouslySetInnerHTML={{
                   __html: selectedEmail.body?.content ?? "",
