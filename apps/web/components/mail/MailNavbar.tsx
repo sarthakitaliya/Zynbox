@@ -55,6 +55,7 @@ export const MailNavbar = () => {
           <select
             className="pl-10 pr-3 py-1.5 rounded-md bg-[#141414] text-gray-200 appearance-none focus:outline-none cursor-pointer"
             onChange={onCategoryChange}
+            value={searchParams.get("category") || ""}
           >
             <option value="">All Categories</option>
             <option value="work">Work</option>
