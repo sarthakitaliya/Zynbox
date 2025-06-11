@@ -2,6 +2,7 @@ import { useEmailStore } from "@repo/store";
 import { Archive, Reply, Send, Star, Trash2, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { NoEmailSelected } from "./NoEmailSelected";
 
 export const MailDetail = () => {
   const { selectedEmail, getFullEmail, setSelectedEmail } = useEmailStore();
@@ -87,7 +88,7 @@ export const MailDetail = () => {
           </div>
         </>
       ) : (
-        <p className="text-gray-500">Select an email to view details</p>
+       <NoEmailSelected />
       )}
     </div>
   );
