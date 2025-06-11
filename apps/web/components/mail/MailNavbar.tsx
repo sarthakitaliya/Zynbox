@@ -1,7 +1,26 @@
 import { Funnel, ListFilter, Menu, RefreshCcw, Search } from "lucide-react";
 import Toggle from "./Toggle";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const MailNavbar = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const onCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const threadId = searchParams.get("threadId");
+    const category = e.target.value;
+    
+    const params = new URLSearchParams();
+
+    if (category) {
+      params.set("category", category);
+    }
+    if(threadId) {
+      params.set("threadId", threadId);
+    }
+
+    router.push(`/mail/inbox?${params.toString()}`);
+  };
   return (
     <div className="flex flex-col gap-2 bg-[#1A1A1A] sticky top-0 z-10">
       <div className="flex items-center justify-between p-5 border-b border-[#3f3f3f7a]">
@@ -17,7 +36,10 @@ export const MailNavbar = () => {
 
       <div className="flex items-center gap-2 px-5 pb-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={15}
+          />
           <input
             type="text"
             placeholder="Search emails..."
@@ -26,9 +48,13 @@ export const MailNavbar = () => {
         </div>
 
         <div className="relative">
-          <ListFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
+          <ListFilter
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={15}
+          />
           <select
             className="pl-10 pr-3 py-1.5 rounded-md bg-[#141414] text-gray-200 appearance-none focus:outline-none cursor-pointer"
+            onChange={onCategoryChange}
           >
             <option value="">All Categories</option>
             <option value="work">Work</option>
