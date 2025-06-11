@@ -19,7 +19,7 @@ export const Email = ({
     to: string;
   };
 }) => {
-  const { getFullEmail, setSelectedEmail } = useEmailStore();
+  const { selectedEmail, getFullEmail, setSelectedEmail } = useEmailStore();
   const router = useRouter();
 
   const handleClick = () => {
@@ -27,9 +27,11 @@ export const Email = ({
     router.push(`?threadId=${email.id}`);
   };
 
+  const isSelected = selectedEmail?.id === email.id;
+
   return (
     <div
-      className="flex items-center space-x-3 p-4 m-2 hover:bg-zinc-800 rounded-lg cursor-pointer"
+      className={`flex items-center space-x-3 p-4 m-2 rounded-lg cursor-pointer ${isSelected ? 'bg-zinc-800' : 'hover:bg-zinc-800'}`}
       onClick={handleClick}
     >
       <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-bold uppercase">
