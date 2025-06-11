@@ -3,6 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 export const Email = ({
   email,
+  folder = "inbox",
 }: {
   email: {
     id: string;
@@ -18,6 +19,7 @@ export const Email = ({
     senderName?: string;
     to: string;
   };
+  folder?: string;
 }) => {
   const { selectedEmail, getFullEmail, setSelectedEmail } = useEmailStore();
   const router = useRouter();
@@ -33,7 +35,7 @@ export const Email = ({
 
     params.set("threadId", email.id);
 
-    router.push(`/mail/inbox?${params.toString()}`);
+    router.push(`/mail/${folder}?${params.toString()}`);
   };
 
   const isSelected = selectedEmail?.id === email.id;
