@@ -113,11 +113,11 @@ export const MailList = ({ folder }: { folder: ParamValue }) => {
   }, [folder]);
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <div className="sticky top-0 z-10">
         <MailNavbar />
       </div>
-      <div>
+      <div className="flex-1 overflow-y-auto scrollbar-custom">
         {loadingList ? (
           <>
             {Array.from({ length: 8 }).map((_, i) => (

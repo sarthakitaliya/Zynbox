@@ -50,7 +50,7 @@ const ComposeEmailForm: React.FC = () => {
       </div>
 
       {/* Email Body (Placeholder for Rich Text Editor) */}
-      <div className="flex-1 overflow-y-auto mb-6">
+      <div className="flex-1 overflow-y-auto mb-6 scrollbar-custom">
         <textarea
           className="w-full h-full bg-transparent text-gray-200 placeholder-gray-400 focus:outline-none resize-none"
           placeholder="Compose your email..."

@@ -1,5 +1,5 @@
 import { useEmailStore } from "@repo/store";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const Email = ({
   email,
@@ -21,17 +21,26 @@ export const Email = ({
 }) => {
   const { selectedEmail, getFullEmail, setSelectedEmail } = useEmailStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleClick = () => {
-    console.log(`Selected email ID: ${email.id}`);
-    router.push(`?threadId=${email.id}`);
+    const category = searchParams.get("category");
+    const params = new URLSearchParams();
+
+    if (category) {
+      params.set("category", category);
+    }
+
+    params.set("threadId", email.id);
+
+    router.push(`/mail/inbox?${params.toString()}`);
   };
 
   const isSelected = selectedEmail?.id === email.id;
 
   return (
     <div
-      className={`flex items-center space-x-3 p-4 m-2 rounded-lg cursor-pointer ${isSelected ? 'bg-zinc-800' : 'hover:bg-zinc-800'}`}
+      className={`flex items-center space-x-3 p-4 m-2 rounded-lg cursor-pointer ${isSelected ? "bg-zinc-800" : "hover:bg-zinc-800"}`}
       onClick={handleClick}
     >
       <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-bold uppercase">
