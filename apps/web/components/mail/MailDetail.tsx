@@ -18,8 +18,13 @@ export const MailDetail = () => {
     }
   }, [mailId]);
   const handleCloseEmailDetail = () => {
+    const category = searchParams.get("category");
+    if (category) {
+      router.push(`/mail/inbox?category=${category}`);
+    }else{
+      router.push("/mail/inbox");
+    }
     setSelectedEmail(null);
-    router.push("/mail/inbox");
   };
   return (
     <div className="flex flex-col h-full">
