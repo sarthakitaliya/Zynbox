@@ -12,7 +12,7 @@ export const MailDetail = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (mailId && selectedEmail?.id !== mailId) {
+    if (mailId && selectedEmail?.threadId !== mailId) {
       getFullEmail(mailId);
     } else if (!mailId) {
       setSelectedEmail(null);

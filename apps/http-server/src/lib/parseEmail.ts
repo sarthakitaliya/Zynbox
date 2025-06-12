@@ -118,3 +118,15 @@ export function parseEmail(mail: any): ParsedEmail {
     body: extractBody(mail.payload)
   };
 }
+
+export interface ParsedThreadEmail {
+  threadId: string;
+  messages: ParsedEmail[];
+}
+
+export function parseThread(thread: any): ParsedThreadEmail {
+  return {
+    threadId: thread.id,
+    messages: (thread.messages || []).map((msg: any) => parseEmail(msg)),
+  };
+}
