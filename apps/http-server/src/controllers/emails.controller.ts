@@ -11,12 +11,11 @@ export const getEmails = async (req: Request, res: Response) => {
       sent: "in:sent",
       drafts: "in:drafts",
       spam: "in:spam",
-      trash: "in:trash",
-      archived: "is:archived",
+      bin: "in:trash",
+      archive: "is:archived",
     };
     const gmailQuery = queryMap[filter as string] || "";
     const emails = await emailService.getEmails(req.user.id, gmailQuery);
-    console.log("Fetched inbox emails:", emails);
     res.status(200).json(emails);
   } catch (error) {
     res.status(500).json({ message: "Error fetching inbox emails" });

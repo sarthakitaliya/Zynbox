@@ -1,4 +1,5 @@
 import { useEmailStore } from "@repo/store";
+import { ParamValue } from "next/dist/server/request/params";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export const Email = ({
@@ -19,7 +20,7 @@ export const Email = ({
     senderName?: string;
     to: string;
   };
-  folder?: string;
+  folder: ParamValue;
 }) => {
   const { selectedEmail, getFullEmail, setSelectedEmail } = useEmailStore();
   const router = useRouter();
