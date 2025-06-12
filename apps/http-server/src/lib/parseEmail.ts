@@ -58,38 +58,40 @@ function extractBody(payload: any): { content: string; type: "html" | "plain" } 
   let plainContent: string | null = null;
 
   const walkParts = (node: any) => {
-    const parts = node?.parts || [];
-    for (const part of parts) {
-      if (part.mimeType === "text/html" && part.body?.data) {
-        const html = Buffer.from(part.body.data, "base64").toString("utf-8");
-        htmlContent = html;
-      }
+    if (!node) return;
 
-      if (part.mimeType === "text/plain" && part.body?.data) {
-        const text = Buffer.from(part.body.data, "base64").toString("utf-8");
-        const linkified = linkifyHtml(text.replace(/\r?\n/g, "<br>"), { target: "_blank" });
-        plainContent = linkified;
-      }
+    if (node.mimeType === "text/html" && node.body?.data) {
+      const html = Buffer.from(node.body.data, "base64").toString("utf-8");
+      htmlContent = html;
+    }
 
-      if (part.parts) walkParts(part);
+    if (node.mimeType === "text/plain" && node.body?.data) {
+      const text = Buffer.from(node.body.data, "base64").toString("utf-8");
+      const linkified = linkifyHtml(text.replace(/\r?\n/g, "<br>"), { target: "_blank" });
+      plainContent = linkified;
+    }
+
+    if (node.parts) {
+      node.parts.forEach(walkParts);
     }
   };
 
   walkParts(payload);
 
-  if (htmlContent) return { content: htmlContent, type: "html" };
-  if (plainContent) return { content: plainContent, type: "plain" };
-
-  if (payload.body?.data) {
+  // Fallback if walkParts doesn't find anything
+  if (!htmlContent && !plainContent && payload?.body?.data) {
     const fallback = Buffer.from(payload.body.data, "base64").toString("utf-8");
     const type = payload.mimeType === "text/html" ? "html" : "plain";
     if (type === "html") {
-      return { content: fallback, type: "html" };
+      htmlContent = fallback;
     } else {
       const linkified = linkifyHtml(fallback.replace(/\r?\n/g, "<br>"), { target: "_blank" });
-      return { content: linkified, type: "plain" };
+      plainContent = linkified;
     }
   }
+
+  if (htmlContent) return { content: htmlContent, type: "html" };
+  if (plainContent) return { content: plainContent, type: "plain" };
 
   return { content: "", type: "plain" };
 }
@@ -121,12 +123,18 @@ export function parseEmail(mail: any): ParsedEmail {
 
 export interface ParsedThreadEmail {
   threadId: string;
+  subject: string;
+  messageCount: number;
   messages: ParsedEmail[];
 }
 
 export function parseThread(thread: any): ParsedThreadEmail {
+  const messages = (thread.messages || []).map((msg: any) => parseEmail(msg));
+  const subject = messages[0]?.subject || "(No Subject)";
   return {
     threadId: thread.id,
-    messages: (thread.messages || []).map((msg: any) => parseEmail(msg)),
+    subject,
+    messageCount: messages.length,
+    messages,
   };
 }

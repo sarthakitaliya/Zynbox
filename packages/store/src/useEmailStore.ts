@@ -7,7 +7,7 @@ const { setLoading, setError, setMessage } = useUIStore.getState();
 interface Email {
   threadId: string;
   messageCount: number;
-  latest:{
+  latest: {
     from: string;
     subject: string;
     snippet: string;
@@ -17,21 +17,46 @@ interface Email {
     body?: {
       content: string;
       contentType: string;
-    }
+    };
     profileImage?: string;
     senderEmail?: string;
     senderName?: string;
     to: string;
-  }
-} 
-
+  };
+}
+interface threadEmail {
+  id: string;
+  from: string;
+  subject: string;
+  snippet: string;
+  date: string;
+  category: string;
+  read: boolean;
+  body?: {
+    content: string;
+    contentType: string;
+  };
+  profileImage?: string;
+  senderEmail?: string;
+  senderName?: string;
+  to: string;
+}
+interface threadEmail {
+  threadId: string;
+  subject: string;
+  messageCount: number;
+  messages: threadEmail[];
+}
 interface State {
   emails: Email[];
+  selectedThread: threadEmail | null;
   loadingList: boolean;
   setEmails: (emails: Email[]) => void;
   clearEmails: () => void;
   selectedEmail: { threadId: string; message: Email[] } | null;
-  setSelectedEmail: (email: { threadId: string; message: Email[] } | null) => void;
+  setSelectedEmail: (
+    email: { threadId: string; message: Email[] } | null
+  ) => void;
   clearSelectedEmail: () => void;
   getEmails: (filter: string) => Promise<Email[]>;
   getFullEmail: (threadId: string) => Promise<Email>;
@@ -39,6 +64,7 @@ interface State {
 
 export const useEmailStore = create<State>((set) => ({
   emails: [],
+  selectedThread: null,
   loadingList: false,
   setEmails: (emails) => {
     console.log("Setting emails:", emails);
@@ -85,12 +111,7 @@ export const useEmailStore = create<State>((set) => ({
       console.log("Fetched full email:", res);
 
       // Update both selectedEmail and mark the email as read in the list
-      set((state) => ({
-        selectedEmail: res,
-        emails: state.emails.map((email) =>
-          email.threadId === threadId ? { ...email, read: true } : email
-        ),
-      }));
+      set({selectedThread: res});
 
       return res;
     } catch (error) {
