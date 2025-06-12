@@ -13,7 +13,7 @@ export default function MailPage() {
   return (
     <div className="h-full w-full flex">
       <div className="min-w-[40%] rounded-2xl border border-[#3f3f3f7a] m-0.5 overflow-y-auto scrollbar-custom">
-        <MailList folder={folder} />
+        <MailList />
       </div>
       <div className="flex-1 overflow-y-auto border border-[#3f3f3f7a] m-0.5 rounded-2xl scrollbar-custom">
         <MailDetail />

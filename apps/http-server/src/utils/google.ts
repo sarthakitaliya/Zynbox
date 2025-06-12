@@ -41,7 +41,7 @@ export async function getGmailClient(userId: string) {
       refreshToken: true,
     },
   });
-  console.log(user);
+
   if (!user || !user.accessToken || !user.refreshToken) {
     throw new Error("User does not have Google tokens");
   }

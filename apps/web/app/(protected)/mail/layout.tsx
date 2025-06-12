@@ -1,6 +1,3 @@
-// app/(protected)/mail/layout.tsx
-
-
 import Sidebar from '@/components/mail/Sidebar';
 import type { ReactNode } from 'react';
 

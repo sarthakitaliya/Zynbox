@@ -5,10 +5,10 @@ export const getEmails = async (userId: string, query: string) => {
   try {
     const g = new gmailClient();
     await g.init(userId);
-    console.log("Gmail client initialized for user:", userId);
+    // console.log("Gmail client initialized for user:", userId);
 
-    const messages = await g.listEmails(query, 20);
-    console.log("Fetched messages:", messages);
+    const messages = await g.listThreads(query, 50);
+    // console.log("Fetched messages:", messages);
 
     return messages;
   } catch (error) {

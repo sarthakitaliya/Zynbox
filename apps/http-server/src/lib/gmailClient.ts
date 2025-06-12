@@ -29,7 +29,44 @@ export class gmailClient {
     gmail.users.messages;
     this.gmail = gmail;
   }
+  async listThreads(query: string, maxResults: number = 10): Promise<any[]> {
+  try {
+    const response = await this.gmail.users.threads.list({
+      userId: "me",
+      q: query,
+      maxResults,
+    });
 
+    const threads = response.data.threads || [];
+    console.log("Fetched threads:", threads);
+    
+    const parsedThreads = await Promise.all(
+      threads.map(async (thread: any) => {
+        const threadRes = await this.gmail.users.threads.get({
+          userId: "me",
+          id: thread.id,
+          format: "metadata",
+          metadataHeaders: ["Subject", "From", "To", "Date"],
+        });
+
+        const messages = threadRes.data.messages || [];
+        const lastMessage = messages[messages.length - 1];
+
+        return {
+          threadId: thread.id,
+          messageCount: messages.length,
+          latest: parseEmail(lastMessage),
+        };
+      })
+    );
+    console.log("Fetched threads:", parsedThreads);
+    console.log("Fetched threads:", parsedThreads[0].latest.body);
+    return parsedThreads;
+  } catch (error) {
+    console.error("Error listing threads:", error);
+    throw new Error("Failed to list threads");
+  }
+}
   async listEmails(query: string, maxResults: number = 10): Promise<any[]> {
     try {
       const response = await this.gmail.users.messages.list({
@@ -99,11 +136,11 @@ export class gmailClient {
         "base64"
       ).toString("utf-8");
 
-      console.log("Fetched full message:", response.data);
-      console.log("headers", response.data.payload?.headers);
-      console.log("body", response.data.payload?.parts);
-      console.log("html body", html);
-      console.log("text body", text);
+      // console.log("Fetched full message:", response.data);
+      // console.log("headers", response.data.payload?.headers);
+      // console.log("body", response.data.payload?.parts);
+      // console.log("html body", html);
+      // console.log("text body", text);
 
       return parseEmail(response.data);
     } catch (error) {

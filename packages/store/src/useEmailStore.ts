@@ -5,21 +5,24 @@ import { useUIStore } from "./useUIStore.ts";
 const { setLoading, setError, setMessage } = useUIStore.getState();
 
 interface Email {
-  id: string;
-  from: string;
-  subject: string;
-  snippet: string;
-  date: string;
-  category: string;
-  read: boolean;
-  body?: {
-    content: string;
-    contentType: string;
+  threadId: string;
+  messageCount: number;
+  latest:{
+    from: string;
+    subject: string;
+    snippet: string;
+    date: string;
+    category: string;
+    read: boolean;
+    body?: {
+      content: string;
+      contentType: string;
+    }
+    profileImage?: string;
+    senderEmail?: string;
+    senderName?: string;
+    to: string;
   }
-  profileImage?: string;
-  senderEmail?: string;
-  senderName?: string;
-  to: string;
 } 
 
 interface State {
@@ -27,8 +30,8 @@ interface State {
   loadingList: boolean;
   setEmails: (emails: Email[]) => void;
   clearEmails: () => void;
-  selectedEmail: Email | null;
-  setSelectedEmail: (email: Email | null) => void;
+  selectedEmail: { threadId: string; message: Email[] } | null;
+  setSelectedEmail: (email: { threadId: string; message: Email[] } | null) => void;
   clearSelectedEmail: () => void;
   getEmails: (filter: string) => Promise<Email[]>;
   getFullEmail: (threadId: string) => Promise<Email>;
@@ -54,12 +57,7 @@ export const useEmailStore = create<State>((set) => ({
       return;
     }
     console.log("Setting selected email:", email);
-    set((state) => ({
-      selectedEmail: email,
-      emails: state.emails.map((e) =>
-        e.id === email.id ? { ...e, read: true } : e
-      ),
-    }));
+    set({ selectedEmail: email });
   },
   clearSelectedEmail: () => {
     console.log("Clearing selected email");
@@ -90,7 +88,7 @@ export const useEmailStore = create<State>((set) => ({
       set((state) => ({
         selectedEmail: res,
         emails: state.emails.map((email) =>
-          email.id === threadId ? { ...email, read: true } : email
+          email.threadId === threadId ? { ...email, read: true } : email
         ),
       }));
 

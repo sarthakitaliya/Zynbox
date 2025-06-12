@@ -4,6 +4,7 @@ import { Email } from "./Email";
 import { useEffect } from "react";
 import { useEmailStore, useUIStore } from "@repo/store";
 import { EmailSkeleton } from "./EmailListSkeleton";
+import { useParams } from "next/navigation";
 
 const dummyEmails = [
   {
@@ -92,16 +93,17 @@ const dummyEmails = [
   },
 ];
 
-export const MailList = ({ folder }: { folder: ParamValue }) => {
+export const MailList = () => {
   const { getEmails, setEmails, emails, loadingList } = useEmailStore();
-
+  const params = useParams();
+  const folder = params.folder;
   useEffect(() => {
     console.log("Fetching emails for folder:", folder);
 
     const fetchEmails = async () => {
       try {
         if (emails.length > 0) {
-          setEmails([]); 
+          setEmails([]);
         }
         const res: any[] = await getEmails(folder as string);
         setEmails(res);
@@ -127,7 +129,9 @@ export const MailList = ({ folder }: { folder: ParamValue }) => {
         ) : (
           <div className="py-2">
             {emails.length > 0 ? (
-              emails.map((email) => <Email key={email.id} email={email} />)
+              emails.map((email) => (
+                <Email key={email.id} email={email} folder={folder} />
+              ))
             ) : (
               <div className="text-center text-gray-500">No emails found.</div>
             )}
