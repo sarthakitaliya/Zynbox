@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { NoEmailSelected } from "./NoEmailSelected";
 
 export const MailDetail = () => {
-  const { selectedThread, getFullEmail, setSelectedEmail } = useEmailStore();
+  const { selectedThread, getFullEmail, setSelectedThread } = useEmailStore();
   console.log(selectedThread, "selectedThread in MailDetail");
   const searchParams = useSearchParams();
   const mailId = searchParams.get("threadId");
@@ -20,7 +20,7 @@ export const MailDetail = () => {
         console.log("Fetched full email:", email);
       })
     } else if (!mailId) {
-      setSelectedEmail(null);
+      setSelectedThread(null);
     }
   }, [mailId]);
 
@@ -36,7 +36,7 @@ export const MailDetail = () => {
     }else{
       router.push("/mail/inbox");
     }
-    setSelectedEmail(null);
+    setSelectedThread(null);
   };
   return (
     <div className="flex flex-col h-full">

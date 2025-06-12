@@ -54,8 +54,8 @@ interface State {
   setEmails: (emails: Email[]) => void;
   clearEmails: () => void;
   selectedEmail: { threadId: string; message: Email[] } | null;
-  setSelectedEmail: (
-    email: { threadId: string; message: Email[] } | null
+  setSelectedThread: (
+    email: threadEmail | null
   ) => void;
   clearSelectedEmail: () => void;
   getEmails: (filter: string) => Promise<Email[]>;
@@ -76,14 +76,10 @@ export const useEmailStore = create<State>((set) => ({
     set({ selectedEmail: null });
   },
   selectedEmail: null,
-  setSelectedEmail: (email) => {
-    if (!email) {
-      console.log("No email selected, clearing selected email");
-      set({ selectedEmail: null });
-      return;
-    }
-    console.log("Setting selected email:", email);
-    set({ selectedEmail: email });
+  setSelectedThread: (email) => {
+    console.log("Setting selected thread:", email);
+    
+    set({ selectedThread: email });
   },
   clearSelectedEmail: () => {
     console.log("Clearing selected email");
