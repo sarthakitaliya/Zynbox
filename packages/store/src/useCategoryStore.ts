@@ -21,6 +21,8 @@ export const useCategoryStore = create<State>((set) => ({
     try {
       setLoading(true);
       const categories = await apiCategory.getCategories();
+      console.log("Fetched categories:", categories);
+
       set({ categories });
     } catch (error) {
       setError("Failed to fetch categories");
@@ -90,6 +92,9 @@ type category = {
   id: string;
   name: string;
   description?: string;
+  _count?: {
+    emails: number;
+  };
 };
 type State = {
   categories: category[];

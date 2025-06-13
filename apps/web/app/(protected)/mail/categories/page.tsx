@@ -2,6 +2,7 @@
 import { CreateCategoryModal } from "@/components/mail/CreateCategoryModal";
 import { useCategoryStore } from "@repo/store";
 import { useEffect, useState } from "react";
+import { Folder, Pencil } from "lucide-react";
 
 
 
@@ -51,7 +52,7 @@ export default function CategoriesPage() {
         </div>
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
         >
           Create Category
         </button>
@@ -60,14 +61,28 @@ export default function CategoriesPage() {
         {categories.map((category) => (
           <div
             key={category.id}
-            className="border border-gray-300 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition"
+            className="border border-gray-300 dark:border-gray-700 rounded-lg p-4 shadow-md hover:shadow-lg transition flex flex-col gap-2"
           >
-            <h3 className="text-lg font-semibold capitalize text-gray-800 dark:text-gray-100">
-              {category.name}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 whitespace-pre-line">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2">
+                <Folder className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <h3 className="text-lg font-semibold capitalize text-gray-800 dark:text-gray-100">
+                  {category.name}
+                </h3>
+              </div>
+              <button
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition cursor-pointer"
+                title="Edit category"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
               {category.description}
             </p>
+            <span className="mt-2 inline-block bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-medium px-2 py-1 rounded-full w-max">
+              {category._count?.emails ?? 0} email{category._count?.emails === 1 ? "" : "s"}
+            </span>
           </div>
         ))}
       </div>
