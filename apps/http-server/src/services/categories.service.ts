@@ -7,8 +7,17 @@ export const get_categories = async (id: string) => {
     const categories = await prismaClient.customCategory.findMany({
         where:{
             userId: id
+        },
+        include:{
+          _count:{
+            select: {
+              emails: true
+            }
+          }
         }
     })
+    console.log("Fetched categories:", categories);
+    
     return categories;
   } catch (error) {
     console.error("Error fetching categories:", error);
