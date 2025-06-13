@@ -1,5 +1,6 @@
 import { prismaClient } from "@repo/db/client";
 import { CreateCategoryInput } from "../schemas/category.schema";
+import { ValidationError } from "../utils/errors";
 
 export const get_categories = async (id: string) => {
   try {
@@ -37,14 +38,9 @@ export const create_category = async (id: string, name: string, description?: st
       }
     });
     if (count >= 4) {
-      throw new Error("You can only create up to 4 categories");
+      throw new ValidationError("You can only have up to 4 categories");
     }
-    if (!name || name.trim() === "") {
-      throw new Error("Category name is required");
-    }
-    if (description && description.length > 100) {
-      throw new Error("Description cannot exceed 100 characters");
-    }
+    
     const category = await prismaClient.customCategory.create({
       data: {
         userId: id,
@@ -55,18 +51,12 @@ export const create_category = async (id: string, name: string, description?: st
     return category;
   } catch (error) {
     console.error("Error creating category:", error);
-    throw new Error("Failed to create category");
+    throw error;
   }
 }
 
 export const update_category = async (id: string, categoryId: string, name?: string, description?: string) => {
   try {
-    if (!name || name.trim() === "") {
-      throw new Error("Category name is required");
-    }
-    if (description && description.length > 100) {
-      throw new Error("Description cannot exceed 100 characters");
-    }
     const category = await prismaClient.customCategory.update({
       where: {
         id: categoryId,

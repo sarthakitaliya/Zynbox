@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useCategoryStore } from "@repo/store";
+import { useCategoryStore, useUIStore } from "@repo/store";
 
 interface Category {
   name: string;
@@ -18,15 +18,18 @@ export default function SetupCategories() {
     { name: "", description: "" },
   ]);
   const [currentStep, setCurrentStep] = useState(0);
-  const [error, setError] = useState("");
   const [checkingCategorys, setCheckingCategories] = useState(true);
   const { createCategories, checkCategories } = useCategoryStore();
+  const {setError} = useUIStore();
 
   useEffect(() => {
     const checkIfUserHasCategories = async () => {
       const hasCategories: boolean = await checkCategories();
       if (hasCategories) {
-        router.push("/dashboard");
+        setError(
+          "You already have categories set up. Redirecting to inbox..."
+        );
+        router.push("/mail/inbox");
       } else {
         setCheckingCategories(false);
       }
@@ -205,16 +208,6 @@ export default function SetupCategories() {
                   placeholder="Describe what this category is for"
                 />
               </div>
-
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-lg"
-                >
-                  {error}
-                </motion.div>
-              )}
 
               <div className="flex justify-between items-center pt-6">
                 <div>
