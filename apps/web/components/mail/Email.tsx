@@ -28,7 +28,7 @@ export const Email = ({
   };
   folder: ParamValue;
 }) => {
-  const { selectedEmail, getFullEmail, setSelectedEmail } = useEmailStore();
+  const { selectedEmail, getFullEmail } = useEmailStore();
   const router = useRouter();
   const searchParams = useSearchParams();
 

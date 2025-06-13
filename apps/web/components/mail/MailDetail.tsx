@@ -1,23 +1,34 @@
 import { useEmailStore } from "@repo/store";
 import { Archive, Reply, Send, Star, Trash2, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { NoEmailSelected } from "./NoEmailSelected";
 
 export const MailDetail = () => {
-  const { selectedEmail, getFullEmail, setSelectedEmail } = useEmailStore();
-  console.log(selectedEmail);
+  const { selectedThread, getFullEmail, setSelectedThread } = useEmailStore();
+  console.log(selectedThread, "selectedThread in MailDetail");
   const searchParams = useSearchParams();
   const mailId = searchParams.get("threadId");
   const router = useRouter();
 
+  const [openMessageIndex, setOpenMessageIndex] = useState<number>(-1);
+
   useEffect(() => {
-    if (mailId && selectedEmail?.threadId !== mailId) {
-      getFullEmail(mailId);
+    if (mailId && selectedThread?.threadId !== mailId) {
+      getFullEmail(mailId).then((email) => {
+        console.log("Fetched full email:", email);
+      })
     } else if (!mailId) {
-      setSelectedEmail(null);
+      setSelectedThread(null);
     }
   }, [mailId]);
+
+  useEffect(() => {
+    if (selectedThread?.messages?.length) {
+      setOpenMessageIndex(selectedThread.messages.length - 1);
+    }
+  }, [selectedThread]);
   const handleCloseEmailDetail = () => {
     const category = searchParams.get("category");
     if (category) {
@@ -25,11 +36,11 @@ export const MailDetail = () => {
     }else{
       router.push("/mail/inbox");
     }
-    setSelectedEmail(null);
+    setSelectedThread(null);
   };
   return (
     <div className="flex flex-col h-full">
-      {selectedEmail ? (
+      {selectedThread ? (
         <>
           <div className="sticky top-0 z-10 bg-[#1A1A1A]">
             <div className="flex items-center justify-between p-3 border-b border-[#3f3f3f7a]">
@@ -58,32 +69,46 @@ export const MailDetail = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto scrollbar-custom">
-            <div className="p-4">
-              <div className="mb-4 flex">
-                <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-bold uppercase">
-                  {selectedEmail.senderName?.charAt(0) ?? "?"}
+            <div className="p-4 space-y-5">
+              <h2 className="flex items-center text-xl font-semibold text-white pb-10 border-b border-[#3f3f3f7a] pb-4">{selectedThread.subject}
+                {selectedThread.messageCount > 1 && (
+              <span className="text-sm text-gray-500 ml-2">
+                [{selectedThread.messageCount}]
+              </span>
+            )}
+              </h2>
+              {selectedThread.messages.map((email, index) => (
+                <div key={email.id} className="border-b border-[#3f3f3f7a] pb-4">
+                  <div
+                    className="cursor-pointer flex items-center justify-between rounded-lg"
+                    onClick={() => setOpenMessageIndex(index === openMessageIndex ? -1 : index)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-bold uppercase">
+                        {email.senderName?.charAt(0) ?? "?"}
+                      </div>
+                      <div className="text-white font-medium">
+                        {email.senderName || email.from}
+                        <p className="text-sm text-gray-500">To: You</p>
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-400">{email.date ?? ""}</div>
+                  </div>
+                  <AnimatePresence initial={false}>
+                    {openMessageIndex === index && (
+                      <motion.div
+                        key="content"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="text-sm text-gray-200 leading-relaxed px-2 mt-3 overflow-hidden"
+                        dangerouslySetInnerHTML={{ __html: email.body?.content ?? "" }}
+                      />
+                    )}
+                  </AnimatePresence>
                 </div>
-                <div className="ml-3 space-y-1">
-                  <h3 className="text-white font-medium">
-                    {selectedEmail.senderName || selectedEmail.from}
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    To: You
-                  </p>
-                </div>
-                <div className="ml-auto text-right">
-                  <p className="text-md text-gray-500">
-                    {selectedEmail.date?.toLocaleString() ?? ""}
-                  </p>
-                </div>
-              </div>
-              <div>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: selectedEmail.body?.content ?? "",
-                  }}
-                />
-              </div>
+              ))}
             </div>
           </div>
         </>

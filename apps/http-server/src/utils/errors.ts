@@ -4,7 +4,7 @@ export class AppError extends Error {
     public message: string
   ) {
     super(message);
-    Object.setPrototypeOf(this, AppError.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
@@ -32,17 +32,25 @@ export class NotFoundError extends AppError {
   }
 }
 
-export const handleError = (error: Error) => {
+export const handleError = (error: unknown) => {
   if (error instanceof AppError) {
     return {
       statusCode: error.statusCode,
-      message: error.message
+      message: error.message,
     };
   }
 
-  // Handle unknown errors
+  if (error instanceof Error) {
+    console.error("Unexpected error:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Internal server error",
+    };
+  }
+
+  console.error("Non-error thrown value:", error);
   return {
     statusCode: 500,
-    message: "Internal server error"
+    message: "Internal server error",
   };
-}; 
+};

@@ -17,11 +17,11 @@ export const getEmails = async (userId: string, query: string) => {
   }
 };
 
-export const getEmailById = async (userId: string, emailId: string) => {
+export const getEmailById = async (userId: string, threadId: string) => {
   try {
     const g = new gmailClient();
     await g.init(userId);
-    const email = await g.getFullMessage(emailId);
+    const email = await g.getThreadWithMessages(threadId);
     return email;
   } catch (error) {
     console.error("Error fetching email:", error);

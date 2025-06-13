@@ -1,10 +1,34 @@
-import Sidebar from '@/components/mail/Sidebar';
-import type { ReactNode } from 'react';
+"use client";
+import Loading from "@/components/Loading";
+import Sidebar from "@/components/mail/Sidebar";
+import { useCategoryStore, useUIStore } from "@repo/store";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
 
 export default function MailLayout({ children }: { children: ReactNode }) {
+  const [checkingCategories, setCheckingCategories] = useState(true);
+  const router = useRouter();
+  const { checkCategories } = useCategoryStore();
+  const { setError } = useUIStore();
+  useEffect(() => {
+    const checkIfUserHasCategories = async () => {
+      const hasCategories: boolean = await checkCategories();
+      if (!hasCategories) {
+        setError("You need to set up categories before using the mail feature.");
+        router.push("/setup-categories");
+      } else {
+        setCheckingCategories(false);
+      }
+    };
+    checkIfUserHasCategories();
+  }, []);
+
+  if (checkingCategories) {
+    return <Loading />;
+  }
   return (
-    <div className="bg-[##111112] flex h-screen w-full">
-      <Sidebar/>
+    <div className="bg-[#111112] flex h-screen w-full">
+      <Sidebar />
       <main className="bg-[#1A1A1A] flex-1 overflow-hidden rounded-l-2xl scrollbar-custom">
         {children}
       </main>

@@ -33,6 +33,8 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
     const category = await create_category(req.user.id, name, description);
     res.status(201).json(category);
   } catch (error) {
+    console.log("Error creating category:", error);
+    
     next(error);
   }
 };
@@ -43,7 +45,7 @@ export const updateCategory = async (req: Request, res: Response, next: NextFunc
     if (!categoryId) {
       throw new ValidationError("Category ID is required");
     }
-    const validationResult = updateCategorySchema.safeParse(req.body);
+    const validationResult = createCategorySchema.safeParse(req.body);
     if (!validationResult.success) {
       const errorMessage = validationResult.error.errors[0]?.message || "Invalid input";
       throw new ValidationError(errorMessage);

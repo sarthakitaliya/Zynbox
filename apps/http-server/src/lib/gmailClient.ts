@@ -1,7 +1,7 @@
 import { prismaClient } from "@repo/db/client";
 import { getOAuthClient } from "../utils/google";
 import { google } from "googleapis";
-import { parseEmail } from "./parseEmail";
+import { parseEmail, parseThread } from "./parseEmail";
 
 export class gmailClient {
   private gmail: any;
@@ -30,43 +30,57 @@ export class gmailClient {
     this.gmail = gmail;
   }
   async listThreads(query: string, maxResults: number = 10): Promise<any[]> {
-  try {
-    const response = await this.gmail.users.threads.list({
-      userId: "me",
-      q: query,
-      maxResults,
-    });
+    try {
+      const response = await this.gmail.users.threads.list({
+        userId: "me",
+        q: query,
+        maxResults,
+      });
 
-    const threads = response.data.threads || [];
-    console.log("Fetched threads:", threads);
-    
-    const parsedThreads = await Promise.all(
-      threads.map(async (thread: any) => {
-        const threadRes = await this.gmail.users.threads.get({
-          userId: "me",
-          id: thread.id,
-          format: "metadata",
-          metadataHeaders: ["Subject", "From", "To", "Date"],
-        });
+      const threads = response.data.threads || [];
+      console.log("Fetched threads:", threads);
 
-        const messages = threadRes.data.messages || [];
-        const lastMessage = messages[messages.length - 1];
+      const parsedThreads = await Promise.all(
+        threads.map(async (thread: any) => {
+          const threadRes = await this.gmail.users.threads.get({
+            userId: "me",
+            id: thread.id,
+            format: "metadata",
+            metadataHeaders: ["Subject", "From", "To", "Date"],
+          });
 
-        return {
-          threadId: thread.id,
-          messageCount: messages.length,
-          latest: parseEmail(lastMessage),
-        };
-      })
-    );
-    console.log("Fetched threads:", parsedThreads);
-    console.log("Fetched threads:", parsedThreads[0].latest.body);
-    return parsedThreads;
-  } catch (error) {
-    console.error("Error listing threads:", error);
-    throw new Error("Failed to list threads");
+          const messages = threadRes.data.messages || [];
+          const lastMessage = messages[messages.length - 1];
+
+          return {
+            threadId: thread.id,
+            messageCount: messages.length,
+            latest: parseEmail(lastMessage),
+          };
+        })
+      );
+      console.log("Fetched threads:", parsedThreads);
+      console.log("Fetched threads:", parsedThreads[0].latest.body);
+      return parsedThreads;
+    } catch (error) {
+      console.error("Error listing threads:", error);
+      throw new Error("Failed to list threads");
+    }
   }
-}
+  async getThreadWithMessages(threadId: string) {
+    try {
+      const response = await this.gmail.users.threads.get({
+        userId: "me",
+        id: threadId,
+        format: "full",
+      });
+
+      return parseThread(response.data);
+    } catch (error) {
+      console.error("Error getting thread with messages:", error);
+      throw new Error("Failed to get messages");
+    }
+  }
   async listEmails(query: string, maxResults: number = 10): Promise<any[]> {
     try {
       const response = await this.gmail.users.messages.list({
