@@ -1,10 +1,18 @@
 import { Funnel, ListFilter, Menu, RefreshCcw, Search } from "lucide-react";
 import Toggle from "./Toggle";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useCategoryStore } from "@repo/store";
 
 export const MailNavbar = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const { fetchCategories, categories } = useCategoryStore();
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const onCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const threadId = searchParams.get("threadId");
@@ -58,10 +66,11 @@ export const MailNavbar = () => {
             value={searchParams.get("category") || ""}
           >
             <option value="">All Categories</option>
-            <option value="work">Work</option>
-            <option value="personal">Personal</option>
-            <option value="promotions">Promotions</option>
-            <option value="important">Important</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.name}>
+                {cat.name}
+              </option>
+            ))}
           </select>
         </div>
       </div>
