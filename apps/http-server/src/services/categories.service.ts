@@ -124,7 +124,26 @@ export const create_categories = async (userId: string, categories: CreateCatego
         })
       )
     );
-    
+
+    // Ensure "Other" category exists
+    const otherCategoryExists = await prismaClient.customCategory.findFirst({
+      where: {
+        userId,
+        name: "Other"
+      }
+    });
+
+    if (!otherCategoryExists) {
+      const otherCategory = await prismaClient.customCategory.create({
+        data: {
+          userId,
+          name: "Other",
+          description: "Emails that don't match any specific category"
+        }
+      });
+      createdCategories.push(otherCategory);
+    }
+
     return createdCategories;
   } catch (error) {
     console.error("Error creating categories:", error);
