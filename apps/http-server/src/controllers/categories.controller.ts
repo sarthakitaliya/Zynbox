@@ -29,8 +29,8 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
       throw new ValidationError(errorMessage);
     }
 
-    const { name, description } = validationResult.data;
-    const category = await create_category(req.user.id, name, description);
+    const { name, description, icon } = validationResult.data;
+    const category = await create_category(req.user.id, name, description, icon);
     res.status(201).json(category);
   } catch (error) {
     console.log("Error creating category:", error);

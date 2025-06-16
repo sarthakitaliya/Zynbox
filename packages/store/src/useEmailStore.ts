@@ -46,6 +46,7 @@ interface threadEmail {
   threadId: string;
   subject: string;
   messageCount: number;
+  categoryIcon?: string;
   messages: threadEmail[];
 }
 interface State {
