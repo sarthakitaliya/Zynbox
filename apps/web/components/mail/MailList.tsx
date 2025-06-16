@@ -2,7 +2,7 @@ import { ParamValue } from "next/dist/server/request/params";
 import { MailNavbar } from "./MailNavbar";
 import { Email } from "./Email";
 import { useEffect } from "react";
-import { useEmailStore, useUIStore } from "@repo/store";
+import { useEmailStore, useAiStore, useUIStore } from "@repo/store";
 import { EmailSkeleton } from "./EmailListSkeleton";
 import { useParams } from "next/navigation";
 
@@ -94,7 +94,9 @@ const dummyEmails = [
 ];
 
 export const MailList = () => {
-  const { getEmails, setEmails, emails, loadingList } = useEmailStore();
+  const { getEmails, setEmails, emails, } = useEmailStore();
+  const { getcategorizeInitialEmails } = useAiStore();
+  const { loadingList } = useUIStore();
   const params = useParams();
   const folder = params.folder;
   useEffect(() => {
@@ -107,6 +109,8 @@ export const MailList = () => {
         }
         const res: any[] = await getEmails(folder as string);
         setEmails(res);
+    
+        
       } catch (error) {
         console.error("Failed to fetch emails:", error);
       }

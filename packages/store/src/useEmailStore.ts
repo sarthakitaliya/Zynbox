@@ -2,11 +2,12 @@ import { apiEmail } from "@repo/api-client/apis";
 import { create } from "zustand";
 import { useUIStore } from "./useUIStore.ts";
 
-const { setLoading, setError, setMessage } = useUIStore.getState();
+const { setLoading, setError, setLoadingList } = useUIStore.getState();
 
 interface Email {
   threadId: string;
   messageCount: number;
+  categoryName?: string;
   latest: {
     from: string;
     subject: string;
@@ -49,8 +50,8 @@ interface threadEmail {
 }
 interface State {
   emails: Email[];
+  allEmails: Email[];
   selectedThread: threadEmail | null;
-  loadingList: boolean;
   setEmails: (emails: Email[]) => void;
   clearEmails: () => void;
   selectedEmail: { threadId: string; message: Email[] } | null;
@@ -60,15 +61,16 @@ interface State {
   clearSelectedEmail: () => void;
   getEmails: (filter: string) => Promise<Email[]>;
   getFullEmail: (threadId: string) => Promise<Email>;
+  filterEmails: (category: string) => void;
 }
 
 export const useEmailStore = create<State>((set) => ({
   emails: [],
+  allEmails: [],
   selectedThread: null,
-  loadingList: false,
   setEmails: (emails) => {
     console.log("Setting emails:", emails);
-    set({ emails });
+    set({ emails, allEmails: emails });
   },
   clearEmails: () => {
     console.log("Clearing emails");
@@ -87,17 +89,17 @@ export const useEmailStore = create<State>((set) => ({
   },
   getEmails: async (filter) => {
     try {
-      set({ loadingList: true });
+      setLoadingList(true);
       const res = await apiEmail.getEmails(filter);
       console.log("Fetched emails:", res);
-      set({ emails: res });
+      set({ emails: res, allEmails: res });
       return res;
     } catch (error) {
       console.error("Failed to fetch emails", error);
       setError("Failed to fetch emails");
       throw error;
     } finally {
-      set({ loadingList: false });
+      setLoadingList(false);
     }
   },
   getFullEmail: async (threadId: string) => {
@@ -117,5 +119,14 @@ export const useEmailStore = create<State>((set) => ({
     } finally {
       setLoading(false);
     }
+  },
+  filterEmails: (category) => {
+    const state = useEmailStore.getState();
+    if (category === "all" || !category) {
+      set({ emails: state.allEmails });
+      return;
+    }
+    const filtered = state.allEmails.filter(email => email.categoryName === category);
+    set({ emails: filtered });
   },
 }));

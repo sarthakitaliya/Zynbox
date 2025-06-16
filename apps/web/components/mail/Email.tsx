@@ -9,7 +9,8 @@ export const Email = ({
   email: {
     threadId: string;
     messageCount: number;
-    latest: {
+    categoryName?: string;
+    latest?: {
       from: string;
       subject: string;
       snippet: string;
@@ -21,7 +22,7 @@ export const Email = ({
         contentType: string;
       };
       profileImage?: string;
-      senderEmail?: string;
+      senderEmail: string;
       senderName?: string;
       to: string;
     };
@@ -53,12 +54,12 @@ export const Email = ({
       onClick={handleClick}
     >
       <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-bold uppercase">
-        {email.latest.senderName?.charAt(0) ?? "?"}
+        {email.latest?.senderName?.charAt(0) ?? "?"}
       </div>
       <div className="flex-1">
         <div className="flex justify-between items-center">
           <h3 className="text-white font-medium">
-            {email.latest.senderName}
+            {email.latest?.senderName ?? "Unknown"}
 
             {email.messageCount > 1 && (
               <span className="text-sm text-gray-500 ml-2">
@@ -66,10 +67,17 @@ export const Email = ({
               </span>
             )}
           </h3>
-          <span className="text-xs text-gray-400">{email.latest.date}</span>
+          <span
+            className={`text-xs ${
+              email.latest?.read ? "text-gray-500" : "text-blue-400"
+            }`}
+          >
+            {email.categoryName ?? ""}
+          </span>
+          <span className="text-xs text-gray-400">{email.latest?.date ?? ""}</span>
         </div>
         <p className="max-w-[20vw] text-xs text-gray-500 truncate">
-          {email.latest.subject}
+          {email.latest?.subject ?? ""}
         </p>
       </div>
     </div>

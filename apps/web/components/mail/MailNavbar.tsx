@@ -2,32 +2,44 @@ import { Funnel, ListFilter, Menu, RefreshCcw, Search } from "lucide-react";
 import Toggle from "./Toggle";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useCategoryStore } from "@repo/store";
+import { useCategoryStore, useEmailStore } from "@repo/store";
 
 export const MailNavbar = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const { fetchCategories, categories } = useCategoryStore();
+  const { filterEmails } = useEmailStore();
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
+  useEffect(() => {
+    const categoryFromURL = searchParams.get("category");
+    if (categoryFromURL) {
+      filterEmails(categoryFromURL);
+    } else {
+      filterEmails("all");
+    }
+  }, [searchParams.get("category")]);
+
   const onCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const threadId = searchParams.get("threadId");
     const category = e.target.value;
-    
+
     const params = new URLSearchParams();
 
     if (category) {
       params.set("category", category);
     }
-    if(threadId) {
+
+    if (threadId) {
       params.set("threadId", threadId);
     }
 
-    router.push(`/mail/inbox?${params.toString()}`);
+    const path = window.location.pathname;
+    router.push(`${path}?${params.toString()}`);
   };
   return (
     <div className="flex flex-col gap-2 bg-[#1A1A1A] sticky top-0 z-10">

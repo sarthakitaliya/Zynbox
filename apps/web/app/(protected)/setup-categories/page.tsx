@@ -84,7 +84,7 @@ export default function SetupCategories() {
         );
 
         await createCategories(completedCategories);
-        router.push("/dashboard");
+        router.push("/mail/inbox");
       } catch (error) {
         console.error("Failed to save categories", error);
         setError("Failed to save categories. Please try again.");
