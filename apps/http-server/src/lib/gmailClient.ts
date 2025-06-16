@@ -38,7 +38,7 @@ export class gmailClient {
       });
 
       const threads = response.data.threads || [];
-      console.log("Fetched threads:", threads);
+      // console.log("Fetched threads:", threads);
 
       const parsedThreads = await Promise.all(
         threads.map(async (thread: any) => {
@@ -59,8 +59,8 @@ export class gmailClient {
           };
         })
       );
-      console.log("Fetched threads:", parsedThreads);
-      console.log("Fetched threads:", parsedThreads[0].latest.body);
+      // console.log("Fetched threads:", parsedThreads);
+      // console.log("Fetched threads:", parsedThreads[0].latest.body);
       return parsedThreads;
     } catch (error) {
       console.error("Error listing threads:", error);
@@ -160,6 +160,45 @@ export class gmailClient {
     } catch (error) {
       console.error("Error getting full message:", error);
       throw new Error("Failed to get full message");
+    }
+  }
+
+  async listThreadsWithFullMessages(
+    query: string,
+    maxResults: number = 10
+  ): Promise<any[]> {
+    try {
+      const response = await this.gmail.users.threads.list({
+        userId: "me",
+        q: query,
+        maxResults,
+      });
+
+      const threads = response.data.threads || [];
+
+      const parsedThreads = await Promise.all(
+        threads.map(async (thread: any) => {
+          const threadRes = await this.gmail.users.threads.get({
+            userId: "me",
+            id: thread.id,
+            format: "full",
+          });
+
+          const messages = threadRes.data.messages || [];
+          const lastMessage = messages[messages.length - 1];
+
+          return {
+            threadId: thread.id,
+            messageCount: messages.length,
+            latest: parseEmail(lastMessage),
+          };
+        })
+      );
+
+      return parsedThreads;
+    } catch (error) {
+      console.error("Error listing threads with full messages:", error);
+      throw new Error("Failed to list threads with full messages");
     }
   }
 }

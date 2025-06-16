@@ -6,6 +6,7 @@ import { errorHandler } from './middleware/error.middleware';
 import authRouter from './routes/auth.route';
 import categoriesRouter from './routes/categories.route';
 import emailsRouter from './routes/emails.route';
+import aiRouter from './routes/ai.route';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.get('/health', (req, res) => {
 app.use("/api/auth", authMiddleware, authRouter)
 app.use("/api/categories", authMiddleware, categoriesRouter)
 app.use("/api/emails", authMiddleware, emailsRouter)
+app.use("/api/ai", authMiddleware, aiRouter)
 
 app.use(errorHandler);
 

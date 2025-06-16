@@ -6,7 +6,7 @@ export const getEmails = async (req: Request, res: Response) => {
     const { filter = "inbox" } = req.query;
     
     const queryMap: Record<string, string> = {
-      inbox: "", 
+      inbox: "in:inbox", 
       starred: "is:starred",
       sent: "in:sent",
       drafts: "in:drafts",
@@ -15,7 +15,9 @@ export const getEmails = async (req: Request, res: Response) => {
       archive: "is:archived",
     };
     const gmailQuery = queryMap[filter as string] || "";
-    const emails = await emailService.getEmails(req.user.id, gmailQuery);
+    const emails = await emailService.getMergedInboxEmails(req.user.id, gmailQuery);
+    console.log("Fetched emails:", emails);
+    
     res.status(200).json(emails);
   } catch (error) {
     res.status(500).json({ message: "Error fetching inbox emails" });
