@@ -12,6 +12,7 @@ interface Category {
 interface CategoryInput {
   name: string;
   description: string;
+  icon?: string; // Optional icon field
 }
 
 

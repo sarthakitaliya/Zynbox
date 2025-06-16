@@ -22,8 +22,21 @@ export const getEmailById = async (userId: string, threadId: string) => {
   try {
     const g = new gmailClient();
     await g.init(userId);
+    const mailCategory = await prismaClient.mail.findUnique({
+      where: { gmailId: threadId },
+      select: {
+        category: {
+          select: {
+            icon: true,
+          }
+        }
+      }
+    });
     const email = await g.getThreadWithMessages(threadId);
-    return email;
+    return {
+      ...email,
+      categoryIcon: mailCategory?.category?.icon ?? null,
+    };
   } catch (error) {
     console.error("Error fetching email:", error);
     throw new Error("Failed to fetch email");
@@ -48,17 +61,19 @@ export const getMergedInboxEmails = async (userId: string, query: string) => {
       category:{
         select:{
           name: true,
+          icon: true,
         }
       }
     },
   });
 
-  const categoryMap = new Map(categorized.map(c => [c.gmailId, c.category?.name ?? null]));
+  const categoryMap = new Map(categorized.map(c => [c.gmailId, { name: c.category?.name ?? null, icon: c.category?.icon ?? null }]));
 
   return threads.map(t => ({
     latest: { ...t.latest },
     threadId: t.threadId,
     messageCount: t.messageCount,
-    categoryName: categoryMap.get(t.latest.id) ?? null,
+    categoryName: categoryMap.get(t.latest.id)?.name ?? null,
+    categoryIcon: categoryMap.get(t.latest.id)?.icon ?? null,
   }));
 };

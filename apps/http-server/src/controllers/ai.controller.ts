@@ -5,7 +5,7 @@ export const categorizeInitialEmails = async (req: Request, res: Response, next:
   try {
     const limit = parseInt(req.query.limit as string) || 30;
     const result = await categorize_Initial_Emails(req.user.id, limit);
-    res.status(200).json({ message: result });
+    res.status(200).json({ success: true, data: result });
   } catch (error) {
     console.error("Error categorizing emails:", error);
     next(error);

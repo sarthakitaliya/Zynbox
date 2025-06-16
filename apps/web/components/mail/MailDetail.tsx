@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NoEmailSelected } from "./NoEmailSelected";
+import { CATEGORY_ICONS } from "@/lib/categoryIcons";
 
 export const MailDetail = () => {
   const { selectedThread, getFullEmail, setSelectedThread } = useEmailStore();
@@ -18,7 +19,7 @@ export const MailDetail = () => {
     if (mailId && selectedThread?.threadId !== mailId) {
       getFullEmail(mailId).then((email) => {
         console.log("Fetched full email:", email);
-      })
+      });
     } else if (!mailId) {
       setSelectedThread(null);
     }
@@ -33,11 +34,13 @@ export const MailDetail = () => {
     const category = searchParams.get("category");
     if (category) {
       router.push(`/mail/inbox?category=${category}`);
-    }else{
+    } else {
       router.push("/mail/inbox");
     }
     setSelectedThread(null);
   };
+  const iconData = CATEGORY_ICONS[selectedThread?.categoryIcon ?? ""];
+
   return (
     <div className="flex flex-col h-full">
       {selectedThread ? (
@@ -70,18 +73,35 @@ export const MailDetail = () => {
 
           <div className="flex-1 overflow-y-auto scrollbar-custom">
             <div className="p-4 space-y-5">
-              <h2 className="flex items-center text-xl font-semibold text-white pb-10 border-b border-[#3f3f3f7a] pb-4">{selectedThread.subject}
-                {selectedThread.messageCount > 1 && (
-              <span className="text-sm text-gray-500 ml-2">
-                [{selectedThread.messageCount}]
-              </span>
-            )}
-              </h2>
+              <div className="flex flex-col items-start text-xl font-semibold text-white pb-5 border-b border-[#3f3f3f7a] space-y-2">
+                <div className="flex items-center gap-2">
+                  <span>{selectedThread.subject}</span>
+                  {selectedThread.messageCount > 1 && (
+                    <span className="text-sm text-gray-500">
+                      [{selectedThread.messageCount}]
+                    </span>
+                  )}
+                </div>
+                {iconData && (
+                  <span
+                    className={`w-5 h-5 rounded-md flex items-center justify-center ${iconData.bg}`}
+                  >
+                    <iconData.icon className="w-3 h-3 text-white" />
+                  </span>
+                )}
+              </div>
               {selectedThread.messages.map((email, index) => (
-                <div key={email.id} className="border-b border-[#3f3f3f7a] pb-4">
+                <div
+                  key={email.id}
+                  className="border-b border-[#3f3f3f7a] pb-4"
+                >
                   <div
                     className="cursor-pointer flex items-center justify-between rounded-lg"
-                    onClick={() => setOpenMessageIndex(index === openMessageIndex ? -1 : index)}
+                    onClick={() =>
+                      setOpenMessageIndex(
+                        index === openMessageIndex ? -1 : index
+                      )
+                    }
                   >
                     <div className="flex items-center gap-2">
                       <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-bold uppercase">
@@ -92,7 +112,9 @@ export const MailDetail = () => {
                         <p className="text-sm text-gray-500">To: You</p>
                       </div>
                     </div>
-                    <div className="text-sm text-gray-400">{email.date ?? ""}</div>
+                    <div className="text-sm text-gray-400">
+                      {email.date ?? ""}
+                    </div>
                   </div>
                   <AnimatePresence initial={false}>
                     {openMessageIndex === index && (
@@ -103,7 +125,9 @@ export const MailDetail = () => {
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.2 }}
                         className="text-sm text-gray-200 leading-relaxed px-2 mt-3 overflow-hidden"
-                        dangerouslySetInnerHTML={{ __html: email.body?.content ?? "" }}
+                        dangerouslySetInnerHTML={{
+                          __html: email.body?.content ?? "",
+                        }}
                       />
                     )}
                   </AnimatePresence>
@@ -113,7 +137,7 @@ export const MailDetail = () => {
           </div>
         </>
       ) : (
-       <NoEmailSelected />
+        <NoEmailSelected />
       )}
     </div>
   );

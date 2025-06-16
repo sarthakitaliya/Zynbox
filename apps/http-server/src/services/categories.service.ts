@@ -39,7 +39,7 @@ export const check_categories = async (id: string) => {
   }
 }
 
-export const create_category = async (id: string, name: string, description?: string) => {
+export const create_category = async (id: string, name: string, description?: string, icon?: string) => {
   try {
     const count = await prismaClient.customCategory.count({
       where: {
@@ -54,7 +54,8 @@ export const create_category = async (id: string, name: string, description?: st
       data: {
         userId: id,
         name,
-        description
+        description,
+        icon
       }
     });
     return category;
@@ -64,7 +65,7 @@ export const create_category = async (id: string, name: string, description?: st
   }
 }
 
-export const update_category = async (id: string, categoryId: string, name?: string, description?: string) => {
+export const update_category = async (id: string, categoryId: string, name?: string, description?: string, icon?: string) => {
   try {
     const category = await prismaClient.customCategory.update({
       where: {
@@ -73,7 +74,8 @@ export const update_category = async (id: string, categoryId: string, name?: str
       },
       data: {
         name,
-        description
+        description,
+        icon
       }
     });
     return category;
@@ -113,7 +115,8 @@ export const create_categories = async (userId: string, categories: CreateCatego
     const categoryData = categories.map(category => ({
       userId,
       name: category.name,
-      description: category.description
+      description: category.description,
+      icon: category.icon || null
     }));
 
     // Create categories one by one to get the full objects back
@@ -129,7 +132,9 @@ export const create_categories = async (userId: string, categories: CreateCatego
     const otherCategoryExists = await prismaClient.customCategory.findFirst({
       where: {
         userId,
-        name: "Other"
+        name: "Other",
+        description: "Emails that don't match any specific category",
+        icon: "other-gray"
       }
     });
 

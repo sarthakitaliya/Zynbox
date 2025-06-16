@@ -92,6 +92,7 @@ type category = {
   id: string;
   name: string;
   description?: string;
+  icon?: string;
   _count?: {
     emails: number;
   };
@@ -103,9 +104,10 @@ type State = {
   createCategory: (categoryData: {
     name: string;
     description: string;
+    icon?: string;
   }) => Promise<void>;
   createCategories: (
-    categoriesData: { name: string; description: string }[]
+    categoriesData: { name: string; description: string; icon?: string }[]
   ) => Promise<void>;
   updateCategory: (
     categoryId: string,

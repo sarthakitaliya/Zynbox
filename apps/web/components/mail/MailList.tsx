@@ -94,7 +94,7 @@ const dummyEmails = [
 ];
 
 export const MailList = () => {
-  const { getEmails, setEmails, emails, } = useEmailStore();
+  const { getEmails, setEmails, emails } = useEmailStore();
   const { getcategorizeInitialEmails } = useAiStore();
   const { loadingList } = useUIStore();
   const params = useParams();
@@ -107,10 +107,11 @@ export const MailList = () => {
         if (emails.length > 0) {
           setEmails([]);
         }
-        const res: any[] = await getEmails(folder as string);
-        setEmails(res);
-    
-        
+        const res = await getcategorizeInitialEmails(10);
+        if (res.success) {
+          const emails: any[] = await getEmails(folder as string);
+          setEmails(emails);
+        }
       } catch (error) {
         console.error("Failed to fetch emails:", error);
       }
