@@ -2,7 +2,7 @@ import { Funnel, ListFilter, Menu, RefreshCcw, Search } from "lucide-react";
 import Toggle from "./Toggle";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useCategoryStore, useEmailStore } from "@repo/store";
+import { useCategoryStore, useEmailStore, useUIStore } from "@repo/store";
 
 export const MailNavbar = () => {
   const searchParams = useSearchParams();
@@ -10,6 +10,7 @@ export const MailNavbar = () => {
 
   const { fetchCategories, categories } = useCategoryStore();
   const { filterEmails } = useEmailStore();
+  const { setSidebarOpen, sidebarOpen } = useUIStore();
 
   useEffect(() => {
     fetchCategories();
@@ -45,7 +46,7 @@ export const MailNavbar = () => {
     <div className="flex flex-col gap-2 bg-[#1A1A1A] sticky top-0 z-10">
       <div className="flex items-center justify-between p-5 border-b border-[#3f3f3f7a]">
         <div className="cursor-pointer">
-          <Menu size={17} className="text-gray-400" />
+          <Menu size={17} className="text-gray-400" onClick={() => setSidebarOpen(!sidebarOpen)} />
         </div>
         <div className="flex space-x-4 items-center">
           <Toggle />

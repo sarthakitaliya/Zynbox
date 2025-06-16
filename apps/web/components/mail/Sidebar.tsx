@@ -15,8 +15,9 @@ import {
   Settings,
   Plus,
 } from "lucide-react";
-import { useUserStore } from "@repo/store";
+import { useUIStore, useUserStore } from "@repo/store";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const navItems = [
   { name: "Inbox", href: "/mail/inbox", icon: Inbox },
@@ -33,13 +34,17 @@ const bottomItems = [
   { name: "Billing", href: "/mail/billing", icon: CreditCard },
   { name: "Settings", href: "/mail/settings", icon: Settings },
 ];
-    
+
 export default function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
   const { user } = useUserStore();
+  const { sidebarOpen } = useUIStore();
 
   return (
-    <aside
+    <motion.aside
+      initial={false}
+      animate={{ x: sidebarOpen ? 0 : -260 }}
+      transition={{ duration: 0.3 }}
       className={`h-screen text-white flex flex-col justify-between p-4 w-[220px] ${className}`}
     >
       <div>
@@ -78,7 +83,7 @@ export default function Sidebar({ className }: { className?: string }) {
               flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-800 transition text-sm
               ${pathname === href ? "bg-gray-800" : ""}
             `}
-              style={{ textDecoration: 'none' }}
+              style={{ textDecoration: "none" }}
             >
               <Icon className="w-4 h-4" />
               {name}
@@ -97,13 +102,13 @@ export default function Sidebar({ className }: { className?: string }) {
             flex items-center gap-3 px-2 py-2 rounded-md hover:bg-gray-800 transition text-sm
             ${pathname === href ? "bg-gray-800" : ""}
           `}
-            style={{ textDecoration: 'none' }}
+            style={{ textDecoration: "none" }}
           >
             <Icon className="w-4 h-4" />
             {name}
           </Link>
         ))}
       </div>
-    </aside>
+    </motion.aside>
   );
 }

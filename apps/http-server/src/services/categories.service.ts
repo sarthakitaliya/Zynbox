@@ -133,8 +133,6 @@ export const create_categories = async (userId: string, categories: CreateCatego
       where: {
         userId,
         name: "Other",
-        description: "Emails that don't match any specific category",
-        icon: "other-gray"
       }
     });
 
@@ -143,7 +141,8 @@ export const create_categories = async (userId: string, categories: CreateCatego
         data: {
           userId,
           name: "Other",
-          description: "Emails that don't match any specific category"
+          description: "Emails that don't match any specific category",
+          icon: "other-gray",
         }
       });
       createdCategories.push(otherCategory);
