@@ -55,8 +55,8 @@ export const MailNavbar = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 px-5 pb-3">
-        <div className="relative">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-2 px-2 sm:px-5">
+        <div className="relative w-full sm:flex-1 sm:max-w-[22vw]">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
             size={15}
@@ -64,17 +64,17 @@ export const MailNavbar = () => {
           <input
             type="text"
             placeholder="Search emails..."
-            className="w-[22vw] pl-10 pr-3 py-1.5 rounded-md bg-[#141414] text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-600"
+            className="w-full pl-10 pr-3 py-1.5 rounded-md bg-[#141414] text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-600"
           />
         </div>
 
-        <div className="relative">
+        <div className="relative w-full sm:flex-1 sm:max-w-[22vw]">
           <ListFilter
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
             size={15}
           />
           <select
-            className="pl-10 pr-3 py-1.5 rounded-md bg-[#141414] text-gray-200 appearance-none focus:outline-none cursor-pointer"
+            className="w-full pl-10 pr-3 py-1.5 rounded-md bg-[#141414] text-gray-200 appearance-none focus:outline-none cursor-pointer"
             onChange={onCategoryChange}
             value={searchParams.get("category") || ""}
           >

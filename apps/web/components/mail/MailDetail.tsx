@@ -1,4 +1,4 @@
-import { useEmailStore } from "@repo/store";
+import { useEmailStore, useUIStore } from "@repo/store";
 import { Archive, Reply, Send, Star, Trash2, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -6,8 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { NoEmailSelected } from "./NoEmailSelected";
 import { CATEGORY_ICONS } from "@/lib/categoryIcons";
 
+type MailDetailProps = {
+  onBack?: () => void;
+};
+
 export const MailDetail = () => {
   const { selectedThread, getFullEmail, setSelectedThread } = useEmailStore();
+  const { isSmallScreen, setShowMailList } = useUIStore();
   console.log(selectedThread, "selectedThread in MailDetail");
   const searchParams = useSearchParams();
   const mailId = searchParams.get("threadId");
@@ -30,8 +35,12 @@ export const MailDetail = () => {
       setOpenMessageIndex(selectedThread.messages.length - 1);
     }
   }, [selectedThread]);
+  
   const handleCloseEmailDetail = () => {
     const category = searchParams.get("category");
+    if (isSmallScreen) {
+      setShowMailList(true);
+    }
     if (category) {
       router.push(`/mail/inbox?category=${category}`);
     } else {
@@ -40,6 +49,13 @@ export const MailDetail = () => {
     setSelectedThread(null);
   };
   const iconData = CATEGORY_ICONS[selectedThread?.categoryIcon ?? ""];
+
+  // Detect small screens and hide NoEmailSelected if no thread is selected
+
+  // If on small screen and no thread is selected, render nothing
+    if (isSmallScreen && !selectedThread) {
+      return null;
+    }
 
   return (
     <div className="flex flex-col h-full">
