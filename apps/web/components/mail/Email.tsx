@@ -1,5 +1,5 @@
 import { CATEGORY_ICONS } from "@/lib/categoryIcons";
-import { useEmailStore } from "@repo/store";
+import { useEmailStore, useUIStore } from "@repo/store";
 import { ParamValue } from "next/dist/server/request/params";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -32,17 +32,20 @@ export const Email = ({
   folder: ParamValue;
 }) => {
   const { selectedEmail, getFullEmail } = useEmailStore();
+  const { setShowMailList, isSmallScreen } = useUIStore();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const handleClick = () => {
     const category = searchParams.get("category");
     const params = new URLSearchParams();
+    if (isSmallScreen) {
+      setShowMailList(false);
+    }
 
     if (category) {
       params.set("category", category);
     }
-
     params.set("threadId", email.threadId);
 
     router.push(`/mail/${folder}?${params.toString()}`);

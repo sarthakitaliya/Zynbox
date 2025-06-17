@@ -1,14 +1,13 @@
 "use client";
 import { CreateCategoryModal } from "@/components/mail/CreateCategoryModal";
-import { useCategoryStore } from "@repo/store";
+import { useCategoryStore, useUIStore } from "@repo/store";
 import { useEffect, useState } from "react";
-import { Folder, Pencil } from "lucide-react";
-
-
+import { Folder, Menu, Pencil } from "lucide-react";
 
 export default function CategoriesPage() {
   const { fetchCategories, categories, createCategory } = useCategoryStore();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { setSidebarOpen, sidebarOpen } = useUIStore();
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -42,6 +41,13 @@ export default function CategoriesPage() {
 
   return (
     <div className="p-5 m-5">
+      <div className="cursor-pointer mb-">
+        <Menu
+          size={17}
+          className="text-gray-400"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        />
+      </div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-semibold">Categories</h2>
@@ -81,7 +87,8 @@ export default function CategoriesPage() {
               {category.description}
             </p>
             <span className="mt-2 inline-block bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-medium px-2 py-1 rounded-full w-max">
-              {category._count?.emails ?? 0} email{category._count?.emails === 1 ? "" : "s"}
+              {category._count?.emails ?? 0} email
+              {category._count?.emails === 1 ? "" : "s"}
             </span>
           </div>
         ))}
