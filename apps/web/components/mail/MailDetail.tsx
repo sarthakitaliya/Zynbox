@@ -50,9 +50,6 @@ export const MailDetail = () => {
   };
   const iconData = CATEGORY_ICONS[selectedThread?.categoryIcon ?? ""];
 
-  // Detect small screens and hide NoEmailSelected if no thread is selected
-
-  // If on small screen and no thread is selected, render nothing
     if (isSmallScreen && !selectedThread) {
       return null;
     }

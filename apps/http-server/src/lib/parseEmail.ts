@@ -1,6 +1,10 @@
+import DOMPurify from "dompurify";
+import { JSDOM } from "jsdom";
 import md5 from "md5";
-// Removed DOMPurify imports
 import linkifyHtml from "linkify-html";
+
+const window = new JSDOM("").window;
+const purifier = DOMPurify(window);
 
 interface GmailHeader {
   name: string;
@@ -62,7 +66,10 @@ function extractBody(payload: any): { content: string; type: "html" | "plain" } 
 
     if (node.mimeType === "text/html" && node.body?.data) {
       const html = Buffer.from(node.body.data, "base64").toString("utf-8");
-      htmlContent = html;
+      htmlContent = purifier.sanitize(html, {
+        FORBID_TAGS: ["style", "script"],
+        FORBID_ATTR: ["style"],
+      });
     }
 
     if (node.mimeType === "text/plain" && node.body?.data) {
@@ -83,7 +90,10 @@ function extractBody(payload: any): { content: string; type: "html" | "plain" } 
     const fallback = Buffer.from(payload.body.data, "base64").toString("utf-8");
     const type = payload.mimeType === "text/html" ? "html" : "plain";
     if (type === "html") {
-      htmlContent = fallback;
+      htmlContent = purifier.sanitize(fallback, {
+        FORBID_TAGS: ["style", "script"],
+        FORBID_ATTR: ["style"],
+      });
     } else {
       const linkified = linkifyHtml(fallback.replace(/\r?\n/g, "<br>"), { target: "_blank" });
       plainContent = linkified;
