@@ -6,10 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { NoEmailSelected } from "./NoEmailSelected";
 import { CATEGORY_ICONS } from "@/lib/categoryIcons";
 
-type MailDetailProps = {
-  onBack?: () => void;
-};
-
 export const MailDetail = () => {
   const { selectedThread, getFullEmail, setSelectedThread } = useEmailStore();
   const { isSmallScreen, setShowMailList } = useUIStore();
@@ -35,7 +31,7 @@ export const MailDetail = () => {
       setOpenMessageIndex(selectedThread.messages.length - 1);
     }
   }, [selectedThread]);
-  
+
   const handleCloseEmailDetail = () => {
     const category = searchParams.get("category");
     if (isSmallScreen) {
@@ -50,9 +46,10 @@ export const MailDetail = () => {
   };
   const iconData = CATEGORY_ICONS[selectedThread?.categoryIcon ?? ""];
 
-    if (isSmallScreen && !selectedThread) {
-      return null;
-    }
+  if (isSmallScreen && !selectedThread) {
+    return null;
+  }
+  
 
   return (
     <div className="flex flex-col h-full">
