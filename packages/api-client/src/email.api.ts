@@ -23,7 +23,19 @@ const getFullEmail = async (threadId: string) => {
   }
 };
 
+const getRecentEmails = async (since: number) => {
+  try {
+    const response = await api.get(`/emails/recent?since=${since}`);
+    console.log("Fetched recent emails:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching recent emails:", error);
+    return handleError(error);
+  }
+};
+
 export const apiEmail = {
   getEmails,
-  getFullEmail
+  getFullEmail,
+  getRecentEmails
 }

@@ -5,12 +5,15 @@ import { MailList } from "@/components/mail/MailList";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useUIStore } from "@repo/store";
+import { useEmailPolling } from "@/hooks/usePolling";
 
 export default function MailPage() {
   const params = useParams();
   const folder = params.folder;
 
-  const { isSmallScreen, setShowMailList, setIsSmallScreen, showMailList } = useUIStore();
+  const { isSmallScreen, setShowMailList, setIsSmallScreen, showMailList } =
+    useUIStore();
+  const { startPolling, stopPolling } = useEmailPolling();
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
@@ -36,7 +39,10 @@ export default function MailPage() {
       setShowMailList(true);
     }
   };
-
+  // useEffect(() => {
+  //   startPolling();
+  //   return () => stopPolling();
+  // }, []);
   return (
     <div className="h-full w-full flex">
       {/* Show MailList */}

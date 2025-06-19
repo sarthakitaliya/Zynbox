@@ -4,7 +4,7 @@ import { useUIStore } from "./useUIStore.ts";
 
 const { setLoading, setError, setLoadingList } = useUIStore.getState();
 
-interface Email {
+export interface Email {
   threadId: string;
   messageCount: number;
   categoryName?: string;
@@ -63,6 +63,7 @@ interface State {
   getEmails: (filter: string) => Promise<Email[]>;
   getFullEmail: (threadId: string) => Promise<Email>;
   filterEmails: (category: string) => void;
+  getRecentEmails: (since: number) => Promise<Email[]>;
 }
 
 export const useEmailStore = create<State>((set) => ({
@@ -129,5 +130,18 @@ export const useEmailStore = create<State>((set) => ({
     }
     const filtered = state.allEmails.filter(email => email.categoryName === category);
     set({ emails: filtered });
+  },
+  getRecentEmails: async (since: number) => {
+    try {
+      const res = await apiEmail.getRecentEmails(since);
+      console.log("Fetched recent emails:", res);
+      return res;
+    } catch (error) {
+      console.error("Failed to fetch recent emails", error);
+      setError("Failed to fetch recent emails");
+      throw error;
+    } finally {
+      setLoadingList(false);
+    }
   },
 }));
