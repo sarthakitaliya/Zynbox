@@ -32,7 +32,7 @@ interface threadEmail {
   snippet: string;
   date: string;
   category: string;
-  read: boolean;
+  labelIds: string[];
   body?: {
     content: string;
     contentType: string;
@@ -42,7 +42,7 @@ interface threadEmail {
   senderName?: string;
   to: string;
 }
-interface threadEmail {
+interface selectedEmail {
   threadId: string;
   subject: string;
   messageCount: number;
@@ -52,21 +52,21 @@ interface threadEmail {
 interface State {
   emails: Email[];
   allEmails: Email[];
-  selectedThread: threadEmail | null;
+  selectedThread: selectedEmail | null;
   setEmails: (emails: Email[]) => void;
   clearEmails: () => void;
   selectedEmail: { threadId: string; message: Email[] } | null;
-  setSelectedThread: (
-    email: threadEmail | null
-  ) => void;
+  setSelectedThread: (email: selectedEmail | null) => void;
   clearSelectedEmail: () => void;
   getEmails: (filter: string) => Promise<Email[]>;
   getFullEmail: (threadId: string) => Promise<Email>;
   filterEmails: (category: string) => void;
   getRecentEmails: (since: number) => Promise<Email[]>;
   archiveThread: (threadId: string) => Promise<any>;
+  unarchiveThread: (threadId: string) => Promise<any>;
   trashThread: (threadId: string) => Promise<any>;
   starThread: (threadId: string) => Promise<any>;
+  unstarThread: (threadId: string) => Promise<any>;
 }
 
 export const useEmailStore = create<State>((set) => ({
@@ -85,7 +85,7 @@ export const useEmailStore = create<State>((set) => ({
   selectedEmail: null,
   setSelectedThread: (email) => {
     console.log("Setting selected thread:", email);
-    
+
     set({ selectedThread: email });
   },
   clearSelectedEmail: () => {
@@ -114,7 +114,7 @@ export const useEmailStore = create<State>((set) => ({
       console.log("Fetched full email:", res);
 
       // Update both selectedEmail and mark the email as read in the list
-      set({selectedThread: res});
+      set({ selectedThread: res });
 
       return res;
     } catch (error) {
@@ -131,7 +131,9 @@ export const useEmailStore = create<State>((set) => ({
       set({ emails: state.allEmails });
       return;
     }
-    const filtered = state.allEmails.filter(email => email.categoryName === category);
+    const filtered = state.allEmails.filter(
+      (email) => email.categoryName === category
+    );
     set({ emails: filtered });
   },
   getRecentEmails: async (since: number) => {
@@ -154,7 +156,9 @@ export const useEmailStore = create<State>((set) => ({
       console.log("Archived thread:", res);
       set((state) => ({
         emails: state.emails.filter((email) => email.threadId !== threadId),
-        allEmails: state.allEmails.filter((email) => email.threadId !== threadId),
+        allEmails: state.allEmails.filter(
+          (email) => email.threadId !== threadId
+        ),
       }));
       return res;
     } catch (error) {
@@ -164,7 +168,21 @@ export const useEmailStore = create<State>((set) => ({
     } finally {
       setLoading(false);
     }
-  }, 
+  },
+  unarchiveThread: async (threadId: string) => {
+    try {
+      setLoading(true);
+      const res = await apiEmail.unarchiveThread(threadId);
+      console.log("Unarchived thread:", res);
+      return res;
+    } catch (error) {
+      console.error("Failed to unarchive thread", error);
+      setError("Failed to unarchive thread");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  },
   trashThread: async (threadId: string) => {
     try {
       setLoading(true);
@@ -172,7 +190,9 @@ export const useEmailStore = create<State>((set) => ({
       console.log("Trashed thread:", res);
       set((state) => ({
         emails: state.emails.filter((email) => email.threadId !== threadId),
-        allEmails: state.allEmails.filter((email) => email.threadId !== threadId),
+        allEmails: state.allEmails.filter(
+          (email) => email.threadId !== threadId
+        ),
       }));
       return res;
     } catch (error) {
@@ -196,5 +216,19 @@ export const useEmailStore = create<State>((set) => ({
     } finally {
       setLoading(false);
     }
-  }
+  },
+  unstarThread: async (threadId: string) => {
+    try {
+      setLoading(true);
+      const res = await apiEmail.unstarThread(threadId);
+      console.log("Unstarred thread:", res);
+      return res;
+    } catch (error) {
+      console.error("Failed to unstar thread", error);
+      setError("Failed to unstar thread");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  },
 }));

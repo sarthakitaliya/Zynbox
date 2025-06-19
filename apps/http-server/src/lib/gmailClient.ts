@@ -228,6 +228,10 @@ export class gmailClient {
     return this.modifyThreadLabels(threadId, [], ["INBOX"]);
   }
 
+  unarchiveThread(threadId: string) {
+    return this.modifyThreadLabels(threadId, ["INBOX"], ["TRASH"]);
+  }
+  
   starThread(threadId: string) {
     return this.modifyThreadLabels(threadId, ["STARRED"]);
   }

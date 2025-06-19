@@ -45,6 +45,17 @@ const archiveThread = async (threadId: string) => {
   }
 };
 
+const unarchiveThread = async (threadId: string) => {
+  try {
+    const response = await api.post(`/emails/unarchive`, { threadId });
+    console.log("Unarchived thread:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error unarchiving thread:", error);
+    return handleError(error);
+  }
+};
+
 const trashThread = async (threadId: string) => {
   try {
     const response = await api.post(`/emails/trash`, { threadId });
@@ -67,11 +78,24 @@ const starThread = async (threadId: string) => {
   }
 };
 
+const unstarThread = async (threadId: string) => {
+  try {
+    const response = await api.post(`/emails/unstar`, { threadId });
+    console.log("Unstarred thread:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error unstarring thread:", error);
+    return handleError(error);
+  }
+};
+
 export const apiEmail = {
   getEmails,
   getFullEmail,
   getRecentEmails,
   archiveThread,
   trashThread,
-  starThread
+  starThread,
+  unstarThread,
+  unarchiveThread
 }

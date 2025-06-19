@@ -79,6 +79,18 @@ export const archiveThread = async (req: Request, res: Response) => {
   }
 };
 
+export const unarchiveThread = async (req: Request, res: Response) => {
+  const { threadId } = req.body;
+  try {
+    const gmail = new gmailClient();
+    await gmail.init(req.user.id);
+    await gmail.unarchiveThread(threadId);
+    res.status(200).json({ message: "Thread unarchived" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to unarchive thread" });
+  }
+};
+
 export const trashThread = async (req: Request, res: Response) => {
   const { threadId } = req.body;
   try {
@@ -103,3 +115,14 @@ export const starThread = async (req: Request, res: Response) => {
   }
 };
 
+export const unstarThread = async (req: Request, res: Response) => {
+  const { threadId } = req.body;
+  try {
+    const gmail = new gmailClient();
+    await gmail.init(req.user.id);
+    await gmail.unstarThread(threadId);
+    res.status(200).json({ message: "Thread unstarred" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to unstar thread" });
+  }
+}
