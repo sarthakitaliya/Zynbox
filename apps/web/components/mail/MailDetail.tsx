@@ -5,9 +5,19 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NoEmailSelected } from "./NoEmailSelected";
 import { CATEGORY_ICONS } from "@/lib/categoryIcons";
+import { toast } from "sonner";
 
 export const MailDetail = () => {
-  const { selectedThread, getFullEmail, setSelectedThread } = useEmailStore();
+  const {
+    selectedThread,
+    getFullEmail,
+    setSelectedThread,
+    archiveThread,
+    trashThread,
+    starThread,
+    unstarThread,
+    unarchiveThread,
+  } = useEmailStore();
   const { isSmallScreen, setShowMailList } = useUIStore();
   console.log(selectedThread, "selectedThread in MailDetail");
   const searchParams = useSearchParams();
@@ -49,7 +59,75 @@ export const MailDetail = () => {
   if (isSmallScreen && !selectedThread) {
     return null;
   }
-  
+
+  const handleArchiveThread = async () => {
+    if (selectedThread) {
+      const isArchived = selectedThread.messages[0].labelIds?.includes("INBOX");
+      toast.promise(
+        isArchived
+          ? unarchiveThread(selectedThread.threadId)
+          : archiveThread(selectedThread.threadId),
+        {
+          loading: isArchived
+            ? "Unarchiving thread..."
+            : "Archiving thread...",
+          success: () => {
+            handleCloseEmailDetail();
+            return isArchived
+              ? "Thread unarchived successfully!"
+              : "Thread archived successfully!";
+          },
+          error: "Failed to archive thread.",
+        }
+      );
+    }
+  };
+  const handleTrashThread = async () => {
+    if (selectedThread) {
+      toast.promise(trashThread(selectedThread.threadId), {
+        loading: "Trashing thread...",
+        success: () => {
+          handleCloseEmailDetail();
+          return "Thread trashed successfully!";
+        },
+        error: "Failed to trash thread.",
+      });
+    }
+  };
+  const handleStarThread = async () => {
+    if (selectedThread) {
+      const isStarred =
+        selectedThread.messages[0].labelIds?.includes("STARRED");
+
+      toast.promise(
+        isStarred
+          ? unstarThread(selectedThread.threadId)
+          : starThread(selectedThread.threadId),
+        {
+          loading: isStarred ? "Unstarring thread..." : "Starring thread...",
+          success: () => {
+            setSelectedThread({
+              ...selectedThread,
+              messages: selectedThread.messages.map((msg, i) =>
+                i === 0
+                  ? {
+                      ...msg,
+                      labelIds: isStarred
+                        ? msg.labelIds?.filter((label) => label !== "STARRED")
+                        : [...(msg.labelIds || []), "STARRED"],
+                    }
+                  : msg
+              ),
+            });
+            return isStarred
+              ? "Thread unstarred successfully!"
+              : "Thread starred successfully!";
+          },
+          error: "Failed to toggle star on thread.",
+        }
+      );
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -69,13 +147,33 @@ export const MailDetail = () => {
                   <p className="text-gray-300 text-sm">Reply</p>
                 </div>
                 <div className="cursor-pointer text-gray-400 hover:bg-gray-700 rounded p-2">
-                  <Star size={16} className="text-gray-400" />
+                  {selectedThread?.messages[0].labelIds?.includes("STARRED") ? (
+                    <Star
+                      size={16}
+                      className="text-yellow-400 fill-yellow-400"
+                      onClick={handleStarThread}
+                    />
+                  ) : (
+                    <Star
+                      size={16}
+                      className="text-gray-400"
+                      onClick={handleStarThread}
+                    />
+                  )}
                 </div>
                 <div className="cursor-pointer text-gray-400 hover:bg-gray-700 rounded p-2">
-                  <Archive size={16} className="text-gray-400" />
+                  <Archive
+                    size={16}
+                    className="text-gray-400"
+                    onClick={handleArchiveThread}
+                  />
                 </div>
                 <div className="cursor-pointer text-gray-400 hover:bg-gray-700 rounded p-2">
-                  <Trash2 size={16} className="text-red-500" />
+                  <Trash2
+                    size={16}
+                    className="text-red-500"
+                    onClick={handleTrashThread}
+                  />
                 </div>
               </div>
             </div>
