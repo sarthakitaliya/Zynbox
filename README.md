@@ -8,7 +8,6 @@ Zynbox is an AI-powered Gmail attachment and email management platform. It intel
 
 ### ✨ Authentication
 - Google login support using `better-auth`
-- Custom OAuth flow for connecting multiple Gmail accounts per user (in v2)
 
 ### 📬 Email Management
 - Secure Gmail API integration to fetch emails and metadata
@@ -29,7 +28,7 @@ Zynbox is an AI-powered Gmail attachment and email management platform. It intel
 - **Frontend:** Next.js, TypeScript, TailwindCSS, Zustand
 - **Backend:** Node.js, Express, Prisma, PostgreSQL
 - **Auth:** Better-auth, Google OAuth2
-- **Infra:** Turborepo, Cloudinary (attachments)
+- **Infra:** Turborepo
 
 ---
 
