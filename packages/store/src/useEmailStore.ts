@@ -63,7 +63,6 @@ interface State {
   filterEmails: (category: string) => void;
   getRecentEmails: (since: number) => Promise<Email[]>;
   archiveThread: (threadId: string) => Promise<any>;
-  unarchiveThread: (threadId: string) => Promise<any>;
   trashThread: (threadId: string) => Promise<any>;
   starThread: (threadId: string) => Promise<any>;
   unstarThread: (threadId: string) => Promise<any>;
@@ -164,20 +163,6 @@ export const useEmailStore = create<State>((set) => ({
     } catch (error) {
       console.error("Failed to archive thread", error);
       setError("Failed to archive thread");
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  },
-  unarchiveThread: async (threadId: string) => {
-    try {
-      setLoading(true);
-      const res = await apiEmail.unarchiveThread(threadId);
-      console.log("Unarchived thread:", res);
-      return res;
-    } catch (error) {
-      console.error("Failed to unarchive thread", error);
-      setError("Failed to unarchive thread");
       throw error;
     } finally {
       setLoading(false);
