@@ -201,4 +201,38 @@ export class gmailClient {
       throw new Error("Failed to list threads with full messages");
     }
   }
+  async modifyThreadLabels(
+    threadId: string,
+    add: string[] = [],
+    remove: string[] = []
+  ) {
+    try {
+      await this.gmail.users.threads.modify({
+        userId: "me",
+        id: threadId,
+        requestBody: {
+          addLabelIds: add,
+          removeLabelIds: remove,
+        },
+      });
+    } catch (error) {
+      console.error("Error modifying labels:", error);
+      throw new Error("Failed to modify labels");
+    }
+  }
+  trashThread(threadId: string) {
+    return this.modifyThreadLabels(threadId, ["TRASH"]);
+  }
+
+  archiveThread(threadId: string) {
+    return this.modifyThreadLabels(threadId, [], ["INBOX"]);
+  }
+
+  starThread(threadId: string) {
+    return this.modifyThreadLabels(threadId, ["STARRED"]);
+  }
+
+  unstarThread(threadId: string) {
+    return this.modifyThreadLabels(threadId, [], ["STARRED"]);
+  }
 }

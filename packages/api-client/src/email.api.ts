@@ -34,8 +34,44 @@ const getRecentEmails = async (since: number) => {
   }
 };
 
+const archiveThread = async (threadId: string) => {
+  try {
+    const response = await api.post(`/emails/archive`, { threadId });
+    console.log("Archived thread:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error archiving thread:", error);
+    return handleError(error);
+  }
+};
+
+const trashThread = async (threadId: string) => {
+  try {
+    const response = await api.post(`/emails/trash`, { threadId });
+    console.log("Trashed thread:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error trashing thread:", error);
+    return handleError(error);
+  }
+};
+
+const starThread = async (threadId: string) => {
+  try {
+    const response = await api.post(`/emails/star`, { threadId });
+    console.log("Starred thread:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error starring thread:", error);
+    return handleError(error);
+  }
+};
+
 export const apiEmail = {
   getEmails,
   getFullEmail,
-  getRecentEmails
+  getRecentEmails,
+  archiveThread,
+  trashThread,
+  starThread
 }

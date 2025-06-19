@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NoEmailSelected } from "./NoEmailSelected";
 import { CATEGORY_ICONS } from "@/lib/categoryIcons";
+import { toast } from "sonner";
 
 export const MailDetail = () => {
-  const { selectedThread, getFullEmail, setSelectedThread } = useEmailStore();
+  const { selectedThread, getFullEmail, setSelectedThread, archiveThread, trashThread, starThread } = useEmailStore();
   const { isSmallScreen, setShowMailList } = useUIStore();
   console.log(selectedThread, "selectedThread in MailDetail");
   const searchParams = useSearchParams();
@@ -50,6 +51,50 @@ export const MailDetail = () => {
     return null;
   }
   
+  const handleArchiveThread = async () => {
+    if (selectedThread) {
+      toast.promise(
+        archiveThread(selectedThread.threadId),
+        {
+          loading: "Archiving thread...",
+          success: () => {
+            handleCloseEmailDetail();
+            return "Thread archived successfully!";
+          },
+          error: "Failed to archive thread."
+        }
+      );
+    }
+  };
+  const handleTrashThread = async () => {
+    if (selectedThread) {
+      toast.promise(
+        trashThread(selectedThread.threadId),
+        {
+          loading: "Trashing thread...",
+          success: () => {
+            handleCloseEmailDetail();
+            return "Thread trashed successfully!";
+          },
+          error: "Failed to trash thread."
+        }
+      );
+    }
+  };
+  const handleStarThread = async () => {    
+    if (selectedThread) {
+      toast.promise(
+        starThread(selectedThread.threadId),
+        {
+          loading: "Starring thread...",
+          success: () => {
+            return "Thread starred successfully!";
+          },
+          error: "Failed to star thread."
+        }
+      );
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -69,13 +114,13 @@ export const MailDetail = () => {
                   <p className="text-gray-300 text-sm">Reply</p>
                 </div>
                 <div className="cursor-pointer text-gray-400 hover:bg-gray-700 rounded p-2">
-                  <Star size={16} className="text-gray-400" />
+                  <Star size={16} className="text-gray-400" onClick={handleStarThread}/>
                 </div>
                 <div className="cursor-pointer text-gray-400 hover:bg-gray-700 rounded p-2">
-                  <Archive size={16} className="text-gray-400" />
+                  <Archive size={16} className="text-gray-400" onClick={handleArchiveThread}/>
                 </div>
                 <div className="cursor-pointer text-gray-400 hover:bg-gray-700 rounded p-2">
-                  <Trash2 size={16} className="text-red-500" />
+                  <Trash2 size={16} className="text-red-500" onClick={handleTrashThread}/>
                 </div>
               </div>
             </div>

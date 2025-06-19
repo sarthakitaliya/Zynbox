@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as emailService from "../services/email.service";
+import { gmailClient } from "../lib/gmailClient";
 
 export const getEmails = async (req: Request, res: Response) => {
   try {
@@ -65,3 +66,40 @@ export const getRecentEmails = async (
     res.status(500).json({ message: "Error fetching recent emails" });
   }
 };
+
+export const archiveThread = async (req: Request, res: Response) => {
+  const { threadId } = req.body;
+  try {
+    const gmail = new gmailClient();
+    await gmail.init(req.user.id);
+    await gmail.archiveThread(threadId);
+    res.status(200).json({ message: "Thread archived" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to archive thread" });
+  }
+};
+
+export const trashThread = async (req: Request, res: Response) => {
+  const { threadId } = req.body;
+  try {
+    const gmail = new gmailClient();
+    await gmail.init(req.user.id);
+    await gmail.trashThread(threadId);
+    res.status(200).json({ message: "Thread trashed" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to trash thread" });
+  }
+};
+
+export const starThread = async (req: Request, res: Response) => {
+  const { threadId } = req.body;
+  try {
+    const gmail = new gmailClient();
+    await gmail.init(req.user.id);
+    await gmail.starThread(threadId);
+    res.status(200).json({ message: "Thread starred" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to star thread" });
+  }
+};
+

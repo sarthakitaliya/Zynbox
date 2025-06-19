@@ -64,6 +64,9 @@ interface State {
   getFullEmail: (threadId: string) => Promise<Email>;
   filterEmails: (category: string) => void;
   getRecentEmails: (since: number) => Promise<Email[]>;
+  archiveThread: (threadId: string) => Promise<any>;
+  trashThread: (threadId: string) => Promise<any>;
+  starThread: (threadId: string) => Promise<any>;
 }
 
 export const useEmailStore = create<State>((set) => ({
@@ -144,4 +147,54 @@ export const useEmailStore = create<State>((set) => ({
       setLoadingList(false);
     }
   },
+  archiveThread: async (threadId: string) => {
+    try {
+      setLoading(true);
+      const res = await apiEmail.archiveThread(threadId);
+      console.log("Archived thread:", res);
+      set((state) => ({
+        emails: state.emails.filter((email) => email.threadId !== threadId),
+        allEmails: state.allEmails.filter((email) => email.threadId !== threadId),
+      }));
+      return res;
+    } catch (error) {
+      console.error("Failed to archive thread", error);
+      setError("Failed to archive thread");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, 
+  trashThread: async (threadId: string) => {
+    try {
+      setLoading(true);
+      const res = await apiEmail.trashThread(threadId);
+      console.log("Trashed thread:", res);
+      set((state) => ({
+        emails: state.emails.filter((email) => email.threadId !== threadId),
+        allEmails: state.allEmails.filter((email) => email.threadId !== threadId),
+      }));
+      return res;
+    } catch (error) {
+      console.error("Failed to trash thread", error);
+      setError("Failed to trash thread");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  },
+  starThread: async (threadId: string) => {
+    try {
+      setLoading(true);
+      const res = await apiEmail.starThread(threadId);
+      console.log("Starred thread:", res);
+      return res;
+    } catch (error) {
+      console.error("Failed to star thread", error);
+      setError("Failed to star thread");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
 }));
