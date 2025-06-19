@@ -44,3 +44,24 @@ export const getFullEmail = async (
     res.status(500).json({ message: "Error fetching email" });
   }
 };
+
+export const getRecentEmails = async (
+  req: Request<{}, {}, {}, { since?: string }>,
+  res: Response
+) => {
+  try {
+    const { since } = req.query;
+    const timestamp = since ? parseInt(since) : Math.floor(Date.now() / 1000) - 60;
+
+    const query = `in:inbox after:${timestamp}`;
+    console.log("recent");
+    
+    const emails = await emailService.getEmails(req.user.id, query);
+    console.log(emails);
+    
+    res.status(200).json(emails);
+  } catch (error) {
+    console.error("Error fetching recent emails:", error);
+    res.status(500).json({ message: "Error fetching recent emails" });
+  }
+};
