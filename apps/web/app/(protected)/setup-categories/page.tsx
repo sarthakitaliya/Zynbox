@@ -186,7 +186,7 @@ export default function SetupCategories() {
                 </label>
 
                   <CategoryIconPicker
-                    value={currentCategory.icon}
+                    value={currentCategory.icon ?? ""}
                     onChange={(icon) => {
                       updateCategory("icon", icon);
                       console.log(icon);

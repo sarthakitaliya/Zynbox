@@ -1,6 +1,6 @@
 import { apiEmail } from "@repo/api-client/apis";
 import { create } from "zustand";
-import { useUIStore } from "./useUIStore.ts";
+import { useUIStore } from "./useUIStore";
 
 const { setLoading, setError, setLoadingList } = useUIStore.getState();
 

@@ -137,7 +137,15 @@ export const MailList = () => {
               emails.map((email) => (
                 <Email 
                   key={email.threadId} 
-                  email={email}
+                  email={{
+                    ...email,
+                    latest: email.latest
+                      ? {
+                          ...email.latest,
+                          senderEmail: email.latest.senderEmail ?? "",
+                        }
+                      : undefined,
+                  }}
                   folder={folder} 
                 />
               ))

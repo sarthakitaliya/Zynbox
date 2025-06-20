@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { apiCategory } from "@repo/api-client/apis";
-import { useUIStore } from "./useUIStore.ts";
+import { useUIStore } from "./useUIStore";
 
 const { setLoading, setError, setMessage } = useUIStore.getState();
 export const useCategoryStore = create<State>((set) => ({

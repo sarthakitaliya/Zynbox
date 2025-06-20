@@ -1,7 +1,7 @@
 import { apiAI } from "@repo/api-client/apis";
 import { create } from "zustand";
-import { useUIStore } from "./useUIStore.ts";
-import { useEmailStore } from "./useEmailStore.ts";
+import { useUIStore } from "./useUIStore";
+import { useEmailStore } from "./useEmailStore";
 
 const { setError, setMessage, setLoadingList } = useUIStore.getState();
 export const useAiStore = create<State>((set) => ({
