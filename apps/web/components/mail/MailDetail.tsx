@@ -16,7 +16,6 @@ export const MailDetail = () => {
     trashThread,
     starThread,
     unstarThread,
-    unarchiveThread,
   } = useEmailStore();
   const { isSmallScreen, setShowMailList } = useUIStore();
   console.log(selectedThread, "selectedThread in MailDetail");
@@ -63,23 +62,16 @@ export const MailDetail = () => {
   const handleArchiveThread = async () => {
     if (selectedThread) {
       const isArchived = selectedThread.messages[0].labelIds?.includes("INBOX");
-      toast.promise(
-        isArchived
-          ? unarchiveThread(selectedThread.threadId)
-          : archiveThread(selectedThread.threadId),
-        {
-          loading: isArchived
-            ? "Unarchiving thread..."
-            : "Archiving thread...",
-          success: () => {
-            handleCloseEmailDetail();
-            return isArchived
-              ? "Thread unarchived successfully!"
-              : "Thread archived successfully!";
-          },
-          error: "Failed to archive thread.",
-        }
-      );
+      toast.promise(archiveThread(selectedThread.threadId), {
+        loading: "loading...",
+        success: () => {
+          handleCloseEmailDetail();
+          return isArchived
+            ? "Already archived"
+            : "Thread archived successfully!";
+        },
+        error: "Failed to archive thread.",
+      });
     }
   };
   const handleTrashThread = async () => {
