@@ -43,7 +43,7 @@ export function CategoryIconPicker({
           leaveTo="opacity-0"
         >
           <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-zinc-900 py-1 text-base shadow-lg ring-1 ring-black/20 focus:outline-none sm:text-sm z-50">
-            {Object.entries(CATEGORY_ICONS).map(([key, iconObj]) => (
+            {Object.entries(CATEGORY_ICONS).map(([key, iconObj]: [string, any]) => (
               <Listbox.Option
                 key={key}
                 className={({ active }) =>

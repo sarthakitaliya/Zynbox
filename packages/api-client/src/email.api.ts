@@ -1,5 +1,5 @@
-import { api } from "./axiosInstance.ts";
-import { handleError } from "./handleError.ts";
+import { api } from "./axiosInstance";
+import { handleError } from "./handleError";
 
 const getEmails = async (filter: string) => {
   try {

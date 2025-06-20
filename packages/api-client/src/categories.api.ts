@@ -1,6 +1,6 @@
-import { api } from "./axiosInstance.ts";
+import { api } from "./axiosInstance";
 import axios, { AxiosError } from "axios";
-import { handleError } from "./handleError.ts";
+import { handleError } from "./handleError";
 
 interface Category {
   id: string;
