@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile.server
+    container_name: zynbox-backend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/zynbox
+    networks:
+      - zynbox-net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile.frontend
+    container_name: zynbox-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:3001
+      DATABASE_URL: postgres://postgres:postgres@db:5432/zynbox
+    networks:
+      - zynbox-net
+
+  db:
+    image: postgres
+    container_name: zynbox-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: zynbox
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - zynbox-net
+
+volumes:
+  pgdata:
+
+networks:
+  zynbox-net:
