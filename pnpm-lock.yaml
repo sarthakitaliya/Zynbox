@@ -82,6 +82,70 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
 
+  apps/server:
+    dependencies:
+      '@google/genai':
+        specifier: ^1.5.1
+        version: 1.5.1(@modelcontextprotocol/sdk@1.11.0)
+      '@types/cors':
+        specifier: ^2.8.18
+        version: 2.8.18
+      '@types/express':
+        specifier: ^5.0.2
+        version: 5.0.2
+      '@types/jsdom':
+        specifier: ^21.1.7
+        version: 21.1.7
+      '@types/md5':
+        specifier: ^2.3.5
+        version: 2.3.5
+      axios:
+        specifier: ^1.9.0
+        version: 1.9.0
+      better-auth:
+        specifier: ^1.2.8
+        version: 1.2.8
+      cookie-parser:
+        specifier: ^1.4.7
+        version: 1.4.7
+      cors:
+        specifier: ^2.8.5
+        version: 2.8.5
+      dompurify:
+        specifier: ^3.2.6
+        version: 3.2.6
+      dotenv:
+        specifier: ^16.5.0
+        version: 16.5.0
+      express:
+        specifier: ^5.1.0
+        version: 5.1.0
+      googleapis:
+        specifier: ^149.0.0
+        version: 149.0.0
+      isomorphic-dompurify:
+        specifier: ^2.25.0
+        version: 2.25.0
+      jsdom:
+        specifier: ^26.1.0
+        version: 26.1.0
+      linkify-html:
+        specifier: ^4.3.1
+        version: 4.3.1(linkifyjs@4.3.1)
+      md5:
+        specifier: ^2.3.0
+        version: 2.3.0
+      zod:
+        specifier: ^3.25.28
+        version: 3.25.28
+    devDependencies:
+      '@repo/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+
   apps/web:
     dependencies:
       '@headlessui/react':
@@ -152,6 +216,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: ^24.0.3
+        version: 24.0.3
 
   packages/db:
     dependencies:
@@ -882,6 +949,9 @@ packages:
 
   '@types/node@22.15.3':
     resolution: {integrity: sha512-lX7HFZeHf4QG/J7tBZqrCAXwz9J5RD56Y6MpP0eJkka8p+K0RY/yBTW7CYFJ4VGCclxqOLKmiGP5juQc6MKgcw==}
+
+  '@types/node@24.0.3':
+    resolution: {integrity: sha512-R4I/kzCYAdRLzfiCabn9hxWfbuHS573x+r0dJMkkzThEa7pbrcDWK+9zu3e7aBOouf+rQAciqPFMnxwr0aWgKg==}
 
   '@types/qs@6.14.0':
     resolution: {integrity: sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==}
@@ -3029,6 +3099,9 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
+  undici-types@7.8.0:
+    resolution: {integrity: sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==}
+
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
@@ -3173,9 +3246,6 @@ packages:
     resolution: {integrity: sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g==}
     peerDependencies:
       zod: ^3.24.1
-
-  zod@3.24.4:
-    resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
 
   zod@3.25.28:
     resolution: {integrity: sha512-/nt/67WYKnr5by3YS7LroZJbtcCBurDKKPBPWWzaxvVCGuG/NOsiKkrjoOhI8mJ+SQUXEbUzeB3S+6XDUEEj7Q==}
@@ -3480,8 +3550,8 @@ snapshots:
       express-rate-limit: 7.5.0(express@5.1.0)
       pkce-challenge: 5.0.0
       raw-body: 3.0.0
-      zod: 3.24.4
-      zod-to-json-schema: 3.24.5(zod@3.24.4)
+      zod: 3.25.28
+      zod-to-json-schema: 3.24.5(zod@3.25.28)
     transitivePeerDependencies:
       - supports-color
 
@@ -3846,6 +3916,10 @@ snapshots:
   '@types/node@22.15.3':
     dependencies:
       undici-types: 6.21.0
+
+  '@types/node@24.0.3':
+    dependencies:
+      undici-types: 7.8.0
 
   '@types/qs@6.14.0': {}
 
@@ -4647,7 +4721,7 @@ snapshots:
       minimatch: 3.1.2
       natural-compare: 1.4.0
       optionator: 0.9.4
-      zod: 3.24.4
+      zod: 3.25.28
     optionalDependencies:
       jiti: 2.4.2
     transitivePeerDependencies:
@@ -6408,6 +6482,8 @@ snapshots:
 
   undici-types@6.21.0: {}
 
+  undici-types@7.8.0: {}
+
   universalify@2.0.1: {}
 
   unpipe@1.0.0: {}
@@ -6539,15 +6615,9 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod-to-json-schema@3.24.5(zod@3.24.4):
-    dependencies:
-      zod: 3.24.4
-
   zod-to-json-schema@3.24.5(zod@3.25.28):
     dependencies:
       zod: 3.25.28
-
-  zod@3.24.4: {}
 
   zod@3.25.28: {}
 

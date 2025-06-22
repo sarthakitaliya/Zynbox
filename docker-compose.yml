@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Docker/Dockerfile.server
-    container_name: zynbox-backend
+    container_name: sarthak100x/zynbox-backend
     ports:
       - "3001:3001"
     depends_on:
@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: Docker/Dockerfile.frontend
-    container_name: zynbox-frontend
+    container_name: sarthak100x/zynbox-frontend
     ports:
       - "3000:3000"
     depends_on:
